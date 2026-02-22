@@ -56,7 +56,7 @@ export default function Home() {
             >
               <img
                 src="/images/briadbytinatranparent.png"
-                alt="BraidByTina Logo"
+                alt="BraidsByTina Logo"
                 className="w-full max-w-[300px] md:max-w-[500px] h-auto px-4 md:px-0"
               />
             </motion.div>

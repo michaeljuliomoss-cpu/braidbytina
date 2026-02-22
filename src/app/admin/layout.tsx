@@ -85,7 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </div>
                     <div>
                         <h2 className="text-xl font-black tracking-tighter text-white">Admin</h2>
-                        <p className="text-[10px] text-primary font-bold uppercase tracking-widest leading-none mt-1">BraidByTina Suite</p>
+                        <p className="text-[10px] text-primary font-bold uppercase tracking-widest leading-none mt-1">BraidsByTina Suite</p>
                     </div>
                 </div>
 
@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {/* Header - Mobile */}
                 <header className="lg:hidden h-20 glass-dark border-b border-white/5 px-6 flex items-center justify-between sticky top-0 z-40">
                     <Link href="/" className="text-xl font-bold tracking-tighter">
-                        BraidByTina<span className="text-primary">.</span>
+                        BraidsByTina<span className="text-primary">.</span>
                     </Link>
                     <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-white">
                         <Menu size={28} />

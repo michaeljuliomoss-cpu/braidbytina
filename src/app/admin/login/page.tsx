@@ -48,7 +48,7 @@ export default function AdminLogin() {
                             <Sparkles className="w-10 h-10 text-primary" />
                         </div>
                         <h1 className="text-4xl font-black tracking-tighter text-white mb-2">Admin Login</h1>
-                        <p className="text-gray-400 font-medium">BraidByTina Management Suite</p>
+                        <p className="text-gray-400 font-medium">BraidsByTina Management Suite</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">

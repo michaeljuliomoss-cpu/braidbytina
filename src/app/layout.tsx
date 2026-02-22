@@ -8,8 +8,8 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "BraidByTina | Premium Hair Braiding",
-  description: "Flawless Protective Styles. Knotless, locs, and stitch braids by Tina.",
+  title: "BraidsByTina | Premium Hair Braiding",
+  description: "Bespoke hair braiding services specializing in knotless braids, twists, and protective styling.",
 };
 
 export default function RootLayout({

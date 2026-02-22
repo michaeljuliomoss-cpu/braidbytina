@@ -51,5 +51,44 @@ export const initialize = mutation({
                 await ctx.db.insert("siteContent", item);
             }
         }
+
+        const productsCount = await ctx.db.query("products").collect();
+        if (productsCount.length > 0) {
+            console.log("Already seeded products.");
+        } else {
+            const initialProducts = [
+                {
+                    name: "Grip & Slay Edge Control",
+                    price: 15,
+                    description: "Maximum hold for sleek edges without the white flakes. Infused with honey and argan oil.",
+                    inStock: true,
+                    imageUrl: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=800"
+                },
+                {
+                    name: "Professional Braid Foam",
+                    price: 12,
+                    description: "Lock in your style and eliminate frizz. Quick-drying formula with a refreshing scent.",
+                    inStock: true,
+                    imageUrl: "https://images.unsplash.com/photo-1599305090598-fe1757dfc6c2?auto=format&fit=crop&q=80&w=800"
+                },
+                {
+                    name: "Nourishing Growth Oil",
+                    price: 20,
+                    description: "Soothe your scalp and promote healthy hair growth. Perfect for daily maintenance.",
+                    inStock: true,
+                    imageUrl: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?auto=format&fit=crop&q=80&w=800"
+                },
+                {
+                    name: "Satin Hair Bonnet",
+                    price: 25,
+                    description: "Protect your braids while you sleep. Premium double-layered satin for all hair types.",
+                    inStock: true,
+                    imageUrl: "https://images.unsplash.com/photo-1631730359585-38a4935ccbbd?auto=format&fit=crop&q=80&w=800"
+                }
+            ];
+            for (const product of initialProducts) {
+                await ctx.db.insert("products", product);
+            }
+        }
     },
 });

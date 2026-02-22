@@ -8,10 +8,10 @@ export default function Footer() {
                 <div className="space-y-8">
                     <Link href="/" className="group flex items-center gap-3">
                         <div className="w-24 h-24 flex items-center justify-center p-0 group-hover:scale-110 transition-transform overflow-hidden">
-                            <img src="/images/briadbytinatranparent.png" alt="BraidByTina Logo" className="w-full h-full object-contain" />
+                            <img src="/images/briadbytinatranparent.png" alt="BraidsByTina Logo" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-3xl font-black tracking-tighter text-secondary">
-                            BraidByTina<span className="text-primary italic">.</span>
+                            BraidsByTina<span className="text-primary italic">.</span>
                         </span>
                     </Link>
                     <p className="max-w-xs leading-relaxed font-bold text-lg">

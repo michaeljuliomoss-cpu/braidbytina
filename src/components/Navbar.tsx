@@ -33,10 +33,10 @@ export default function Navbar() {
             <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
                 <Link href="/" className="group flex items-center gap-3">
                     <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden px-1 py-1">
-                        <img src="/images/briadbytinatranparent.png" alt="BraidByTina Logo" className="w-full h-full object-contain" />
+                        <img src="/images/briadbytinatranparent.png" alt="BraidsByTina Logo" className="w-full h-full object-contain" />
                     </div>
                     <span className="text-2xl font-black tracking-tighter text-secondary">
-                        BraidByTina<span className="text-primary italic">.</span>
+                        BraidsByTina<span className="text-primary italic">.</span>
                     </span>
                 </Link>
 

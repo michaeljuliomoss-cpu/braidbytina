@@ -41,11 +41,11 @@ export default function GalleryPage() {
                             >
                                 <img
                                     src={photo.url || ""}
-                                    alt={photo.caption || "Tina's Style"}
+                                    alt={photo.caption || "BraidsByTina Style"}
                                     className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8">
-                                    <p className="text-white font-black text-xl tracking-tight drop-shadow-lg">{photo.caption || "Tina's Style"}</p>
+                                    <p className="text-white font-black text-xl tracking-tight drop-shadow-lg">{photo.caption || "BraidsByTina Style"}</p>
                                 </div>
                             </motion.div>
                         ))
