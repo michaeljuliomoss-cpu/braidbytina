@@ -4,10 +4,15 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+    const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+
+    // Don't show navbar on admin pages
+    if (pathname?.startsWith("/admin")) return null;
 
     useEffect(() => {
         const handleScroll = () => {

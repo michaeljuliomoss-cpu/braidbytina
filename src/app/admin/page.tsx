@@ -39,58 +39,14 @@ export default function AdminDashboard() {
     return (
         <div className="space-y-12">
             <header>
-                <motion.p
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-primary font-bold uppercase tracking-[0.2em] text-sm mb-3"
-                >
-                    Overview Console
-                </motion.p>
                 <motion.h1
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     className="text-5xl md:text-6xl font-black text-white tracking-tighter"
                 >
-                    Welcome Back<span className="text-primary">,</span> Tina
+                    Welcome Back<span className="text-primary">,</span> Jestinna
                 </motion.h1>
             </header>
-
-            {/* Quick Stats */}
-            <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
-                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-            >
-                <StatCard
-                    icon={Scissors}
-                    label="Total Styles"
-                    value={services.length.toString()}
-                    color="bg-primary"
-                    trend="+1 this month"
-                />
-                <StatCard
-                    icon={Eye}
-                    label="Portfolio"
-                    value={photos.length.toString()}
-                    color="bg-purple-500"
-                    trend="Showcase items"
-                />
-                <StatCard
-                    icon={TrendingUp}
-                    label="Avg. Price"
-                    value={`$${Math.round(services.reduce((acc, s) => acc + s.price, 0) / (services.length || 1))}`}
-                    color="bg-blue-500"
-                    trend="Based on styles"
-                />
-                <StatCard
-                    icon={Clock}
-                    label="Last Update"
-                    value="Today"
-                    color="bg-orange-500"
-                    trend="2 hours ago"
-                />
-            </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Recent Services Feed */}
@@ -196,26 +152,3 @@ export default function AdminDashboard() {
     );
 }
 
-function StatCard({ icon: Icon, label, value, color, trend }: any) {
-    return (
-        <motion.div
-            variants={{
-                hidden: { opacity: 0, y: 20 },
-                show: { opacity: 1, y: 0 }
-            }}
-            className="glass-dark p-8 rounded-[2.5rem] border border-white/5 relative overflow-hidden group"
-        >
-            <div className="relative z-10">
-                <div className={`w-14 h-14 ${color} rounded-2xl flex items-center justify-center text-white mb-6 shadow-xl shadow-black/20 group-hover:scale-110 transition-transform duration-500`}>
-                    <Icon size={28} />
-                </div>
-                <p className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-1">{label}</p>
-                <h3 className="text-4xl font-black text-white tracking-tighter mb-4">{value}</h3>
-                <p className="text-xs font-bold text-primary tracking-wide bg-primary/10 px-3 py-1.5 rounded-full inline-block">
-                    {trend}
-                </p>
-            </div>
-            <div className={`absolute -right-8 -top-8 w-32 h-32 ${color}/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
-        </motion.div>
-    );
-}
