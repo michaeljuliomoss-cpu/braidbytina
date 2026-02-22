@@ -22,6 +22,7 @@ export default function Navbar() {
         { name: "Services", href: "/services" },
         { name: "Gallery", href: "/gallery" },
         { name: "Shop", href: "/products" },
+        { name: "Book", href: "/book" },
         { name: "About", href: "/about" },
     ];
 
@@ -51,14 +52,12 @@ export default function Navbar() {
                             {link.name}
                         </Link>
                     ))}
-                    <a
-                        href="https://wa.me/12425537275?text=Hello%20Tina!%20I%20would%20like%20to%20book%20an%20appointment."
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-[#25D366] hover:bg-[#128C7E] text-white px-6 py-2 rounded-full font-bold transition-transform hover:scale-105 shadow-xl shadow-[#25D366]/20"
+                    <Link
+                        href="/book"
+                        className="bg-primary hover:bg-primary-dark text-white px-8 py-2.5 rounded-full font-black transition-all hover:scale-105 shadow-xl shadow-primary/20 active:scale-95"
                     >
-                        Book via WhatsApp
-                    </a>
+                        Book Appointment
+                    </Link>
                 </div>
 
                 {/* Mobile Toggle */}
@@ -90,14 +89,13 @@ export default function Navbar() {
                                     {link.name}
                                 </Link>
                             ))}
-                            <a
-                                href="https://wa.me/12425537275?text=Hello%20Tina!%20I%20would%20like%20to%20book%20an%20appointment."
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="bg-[#25D366] text-white text-center px-6 py-3 rounded-xl font-bold transition-transform active:scale-95 shadow-xl shadow-[#25D366]/10"
+                            <Link
+                                href="/book"
+                                onClick={() => setIsOpen(false)}
+                                className="bg-primary text-white text-center px-6 py-4 rounded-2xl font-black transition-all active:scale-95 shadow-xl shadow-primary/10"
                             >
-                                Book via WhatsApp
-                            </a>
+                                Book Appointment
+                            </Link>
                         </div>
                     </motion.div>
                 )}

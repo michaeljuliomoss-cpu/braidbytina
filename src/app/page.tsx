@@ -94,14 +94,12 @@ export default function Home() {
               transition={{ delay: 1 }}
               className="flex flex-col sm:flex-row gap-4 items-center w-full sm:w-auto px-6 sm:px-0"
             >
-              <a
-                href="https://wa.me/12425537275?text=Hello%20Tina!%20I%20would%20like%20to%20book%20an%20appointment."
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/book"
                 className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white px-10 py-4 md:px-12 md:py-5 rounded-full font-black text-lg md:text-xl transition-all shadow-2xl shadow-primary/30 flex items-center justify-center group"
               >
                 Book Your Style <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </Link>
               <Link
                 href="/gallery"
                 className="w-full sm:w-auto bg-white border-2 border-primary/20 text-primary hover:border-primary px-10 py-4 md:px-12 md:py-5 rounded-full font-black text-lg md:text-xl transition-all flex items-center justify-center"

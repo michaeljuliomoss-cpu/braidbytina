@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Clock } from "lucide-react";
 
@@ -45,14 +46,12 @@ export default function ServiceCard({ name, price, duration, description, imageU
                     {description}
                 </p>
 
-                <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <Link
+                    href="/book"
                     className="block w-full text-center bg-primary hover:bg-primary-dark text-white font-black py-4 rounded-full transition-all active:scale-95 shadow-lg shadow-primary/20"
                 >
                     Book This Style
-                </a>
+                </Link>
             </div>
         </motion.div>
     );
