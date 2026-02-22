@@ -11,6 +11,7 @@
 import type * as admin from "../admin.js";
 import type * as content from "../content.js";
 import type * as gallery from "../gallery.js";
+import type * as products from "../products.js";
 import type * as seed from "../seed.js";
 import type * as services from "../services.js";
 
@@ -24,6 +25,7 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   content: typeof content;
   gallery: typeof gallery;
+  products: typeof products;
   seed: typeof seed;
   services: typeof services;
 }>;

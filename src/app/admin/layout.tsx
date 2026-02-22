@@ -13,7 +13,8 @@ import {
     User,
     Menu,
     X,
-    Sparkles
+    Sparkles,
+    ShoppingBag
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -50,6 +51,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const menuItems = [
         { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
         { name: "Services", href: "/admin/services", icon: Scissors },
+        { name: "Store", href: "/admin/products", icon: ShoppingBag },
         { name: "Portfolio", href: "/admin/gallery", icon: Sparkles },
         { name: "Site Content", href: "/admin/content", icon: FileText },
     ];

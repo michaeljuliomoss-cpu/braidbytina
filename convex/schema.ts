@@ -32,4 +32,13 @@ export default defineSchema({
         caption: v.optional(v.string()),
         order: v.optional(v.number()),
     }),
+
+    products: defineTable({
+        name: v.string(),        // e.g., "Edge Control"
+        price: v.number(),       // e.g., 15
+        description: v.string(), // Product benefits
+        imageId: v.optional(v.id("_storage")),
+        imageUrl: v.optional(v.string()), // For local placeholders
+        inStock: v.boolean(),
+    }).index("by_name", ["name"]),
 });

@@ -3,14 +3,16 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import ServiceCard from "@/components/ServiceCard";
+import ProductCard from "@/components/ProductCard";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown, Sparkles, ArrowRight } from "lucide-react";
+import { ChevronDown, Sparkles, ArrowRight, ShoppingBag } from "lucide-react";
 import { useRef } from "react";
 import Link from "next/link";
 
 export default function Home() {
   const services = useQuery(api.services.getServices) || [];
   const photos = useQuery(api.gallery.getGallery) || [];
+  const products = useQuery(api.products.getProducts) || [];
   const contentData = useQuery(api.content.getAllContent);
 
   // Merge dynamic content with defaults to prevent flashing empty text
@@ -146,8 +148,41 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Essentials Store Preview */}
+      <section className="py-32 bg-white relative overflow-hidden">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+            <div className="max-w-2xl text-left">
+              <p className="text-primary font-bold uppercase tracking-[0.2em] mb-4 text-sm">Essential Accessories</p>
+              <h2 className="text-5xl md:text-9xl font-black tracking-tighter text-secondary leading-none">
+                Hair <br /><span className="text-primary italic">Essentials.</span>
+              </h2>
+            </div>
+            <Link
+              href="/products"
+              className="bg-secondary hover:bg-black text-white px-10 py-5 rounded-full font-black text-xl transition-all shadow-xl shadow-secondary/20 flex items-center gap-3 group"
+            >
+              <ShoppingBag size={24} className="group-hover:scale-110 transition-transform" /> Shop All Products
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {products.length > 0 ? products.slice(0, 4).map((product) => (
+              <ProductCard key={product._id} {...product} />
+            )) : (
+              // Initial empty state message or skeletons
+              <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 rounded-[3rem]">
+                <ShoppingBag className="mx-auto text-gray-200 mb-6" size={64} />
+                <h3 className="text-2xl font-black text-gray-400">Products Coming Soon!</h3>
+                <p className="text-gray-300 font-medium">Check back soon for hair care and accessories.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* About Teaser - Clean Light Layout */}
-      <section className="py-32 bg-white text-secondary relative overflow-hidden">
+      <section className="py-32 bg-stone-50 text-secondary relative overflow-hidden">
         <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="relative group order-2 lg:order-1">
             <div className="aspect-[4/5] rounded-[3rem] overflow-hidden border border-black/5 relative z-10 shadow-2xl">
@@ -171,19 +206,14 @@ export default function Home() {
       </section>
 
       {/* Gallery Preview - Clean White Layout */}
-      <section className="py-32 bg-stone-50 overflow-hidden relative">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-8xl font-black text-secondary tracking-tighter mb-8">
-              The <span className="text-primary italic">Portfolio.</span>
-            </h2>
-            <Link href="/gallery" className="bg-primary hover:bg-primary-dark text-white px-10 py-5 rounded-full font-black text-xl transition-all shadow-xl shadow-primary/30 inline-block">
-              View All Work
-            </Link>
-          </div>
+      <section className="py-32 bg-white overflow-hidden relative">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-5xl md:text-8xl font-black text-secondary tracking-tighter mb-12">
+            The <span className="text-primary italic">Portfolio.</span>
+          </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 pt-12">
-            {photos.length > 0 ? photos.slice(0, 4).map((photo, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-16">
+            {photos.length > 0 ? photos.slice(0, 4).map((photo) => (
               <motion.div
                 key={photo._id}
                 whileHover={{ y: -10 }}
@@ -193,12 +223,17 @@ export default function Home() {
               </motion.div>
             )) : (
               Array(4).fill(0).map((_, i) => (
-                <div key={i} className="aspect-square rounded-3xl bg-gray-200 animate-pulse" />
+                <div key={i} className="aspect-square rounded-3xl bg-gray-100 animate-pulse" />
               ))
             )}
           </div>
+
+          <Link href="/gallery" className="bg-primary hover:bg-primary-dark text-white px-10 py-5 rounded-full font-black text-xl transition-all shadow-xl shadow-primary/30 inline-block">
+            View All Work
+          </Link>
         </div>
       </section>
     </div>
   );
 }
+

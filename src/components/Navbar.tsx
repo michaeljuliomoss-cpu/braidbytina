@@ -21,6 +21,7 @@ export default function Navbar() {
         { name: "Home", href: "/" },
         { name: "Services", href: "/services" },
         { name: "Gallery", href: "/gallery" },
+        { name: "Shop", href: "/products" },
         { name: "About", href: "/about" },
     ];
 
