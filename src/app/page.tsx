@@ -3,16 +3,14 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import ServiceCard from "@/components/ServiceCard";
-import ProductCard from "@/components/ProductCard";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ChevronDown, Sparkles, ArrowRight, ShoppingBag } from "lucide-react";
+import { ChevronDown, Sparkles, ArrowRight } from "lucide-react";
 import { useRef } from "react";
 import Link from "next/link";
 
 export default function Home() {
   const services = useQuery(api.services.getServices) || [];
   const photos = useQuery(api.gallery.getGallery) || [];
-  const products = useQuery(api.products.getProducts) || [];
   const contentData = useQuery(api.content.getAllContent);
 
   // Merge dynamic content with defaults to prevent flashing empty text
@@ -39,19 +37,8 @@ export default function Home() {
             {/* Prominent Logo Integration */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{
-                scale: 1,
-                opacity: 1,
-                y: [0, -10, 0]
-              }}
-              transition={{
-                duration: 1.2,
-                y: {
-                  repeat: Infinity,
-                  duration: 4,
-                  ease: "easeInOut"
-                }
-              }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.8 }}
               className="mb-6 md:mb-10 drop-shadow-[0_20px_50px_rgba(242,138,178,0.3)]"
             >
               <img
@@ -146,38 +133,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Essentials Store Preview */}
-      <section className="py-32 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
-            <div className="max-w-2xl text-left">
-              <p className="text-primary font-bold uppercase tracking-[0.2em] mb-4 text-sm">Essential Accessories</p>
-              <h2 className="text-5xl md:text-9xl font-black tracking-tighter text-secondary leading-none">
-                Hair <br /><span className="text-primary italic">Essentials.</span>
-              </h2>
-            </div>
-            <Link
-              href="/products"
-              className="bg-secondary hover:bg-black text-white px-10 py-5 rounded-full font-black text-xl transition-all shadow-xl shadow-secondary/20 flex items-center gap-3 group"
-            >
-              <ShoppingBag size={24} className="group-hover:scale-110 transition-transform" /> Shop All Products
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {products.length > 0 ? products.slice(0, 4).map((product) => (
-              <ProductCard key={product._id} {...product} />
-            )) : (
-              // Initial empty state message or skeletons
-              <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 rounded-[3rem]">
-                <ShoppingBag className="mx-auto text-gray-200 mb-6" size={64} />
-                <h3 className="text-2xl font-black text-gray-400">Products Coming Soon!</h3>
-                <p className="text-gray-300 font-medium">Check back soon for hair care and accessories.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
 
       {/* About Teaser - Clean Light Layout */}
       <section className="py-32 bg-stone-50 text-secondary relative overflow-hidden">
