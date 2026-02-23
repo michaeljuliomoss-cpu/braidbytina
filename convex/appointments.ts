@@ -25,6 +25,15 @@ export const createAppointment = mutation({
             ...args
         });
 
+        // Trigger WhatsApp notification to the group
+        await ctx.scheduler.runAfter(0, api.whatsapp.sendWhatsAppNotification, {
+            customerName: args.customerName,
+            serviceName: args.serviceName,
+            date: args.date,
+            timeSlot: args.timeSlot,
+            totalPrice: args.totalPrice,
+        });
+
         return appointmentId;
     },
 });
