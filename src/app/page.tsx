@@ -27,8 +27,8 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
       {/* Hero Section - Clean White Makeover Style */}
-      <section ref={ref} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-white pt-32 pb-12 md:pt-40 md:pb-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-white to-white z-0" />
+      <section ref={ref} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-[#fff5f8] pt-32 pb-12 md:pt-40 md:pb-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-[#fff5f8] to-[#fff5f8] z-0" />
 
         <div className="relative z-20 container mx-auto px-6 text-center max-w-5xl">
           <motion.div
