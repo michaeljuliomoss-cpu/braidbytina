@@ -122,7 +122,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </aside>
 
             {/* Main Content */}
-            <main className="flex-grow lg:pl-72 flex flex-col min-h-screen">
+            <main className="flex-grow lg:pl-72 flex flex-col min-h-screen max-w-full overflow-x-hidden">
                 {/* Header - Mobile */}
                 <header className="lg:hidden h-20 glass-dark border-b border-white/5 px-6 flex items-center justify-between sticky top-0 z-40">
                     <Link href="/" prefetch={false} className="text-xl font-bold tracking-tighter text-white hover:text-primary transition-colors">
@@ -133,7 +133,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </button>
                 </header>
 
-                <section className="p-6 md:p-12 lg:p-16 max-w-7xl mx-auto w-full">
+                <section className="px-4 py-6 md:p-12 lg:p-16 max-w-7xl mx-auto w-full">
                     {children}
                 </section>
             </main>

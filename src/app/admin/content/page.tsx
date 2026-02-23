@@ -145,8 +145,8 @@ export default function ContentManager() {
         <div className="space-y-12 pb-20 max-w-5xl">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-2">Content Manager</h1>
-                    <p className="text-gray-500 font-medium text-sm md:text-base">Refine your brand's presence across the entire site.</p>
+                    <h1 className="text-2xl md:text-5xl font-black text-white tracking-tighter mb-2">Content Manager</h1>
+                    <p className="text-gray-500 font-medium text-xs md:text-base">Refine your brand's presence across the entire site.</p>
                 </div>
                 <button
                     onClick={handleSave}
@@ -390,15 +390,15 @@ export default function ContentManager() {
 
 function ContentSection({ icon: Icon, title, description, children }: any) {
     return (
-        <div className="glass-dark rounded-[3.5rem] border border-white/5 overflow-hidden">
-            <div className="p-10 md:p-14 space-y-10">
-                <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center border border-primary/20 shadow-inner">
-                        <Icon size={32} className="text-primary" />
+        <div className="glass-dark rounded-[2rem] md:rounded-[3.5rem] border border-white/5 overflow-hidden">
+            <div className="p-5 md:p-14 space-y-6 md:space-y-10">
+                <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                    <div className="w-10 h-10 md:w-16 md:h-16 bg-primary/10 rounded-xl md:rounded-2xl flex items-center justify-center border border-primary/20 shadow-inner">
+                        <Icon size={20} className="text-primary md:w-8 md:h-8" />
                     </div>
                     <div>
-                        <h2 className="text-3xl font-black text-white tracking-tighter">{title}</h2>
-                        <p className="text-gray-500 font-bold uppercase tracking-widest text-xs mt-1">{description}</p>
+                        <h2 className="text-xl md:text-3xl font-black text-white tracking-tighter">{title}</h2>
+                        <p className="text-gray-500 font-bold uppercase tracking-widest text-[9px] md:text-xs mt-1">{description}</p>
                     </div>
                 </div>
                 <div>
@@ -417,7 +417,7 @@ function InputField({ label, value, onChange, placeholder }: any) {
                 type="text"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-6 text-white placeholder:text-white/20 focus:outline-none focus:border-primary transition-all font-bold text-xl tracking-tight"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 md:px-8 md:py-6 text-white placeholder:text-white/20 focus:outline-none focus:border-primary transition-all font-bold text-base md:text-xl tracking-tight"
                 placeholder={placeholder}
             />
         </div>

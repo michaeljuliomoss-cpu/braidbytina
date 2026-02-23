@@ -60,12 +60,12 @@ export default function AppointmentManager() {
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <p className="text-primary font-black uppercase tracking-widest text-[10px] md:text-xs">Management</p>
-                    <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+                    <h1 className="text-2xl md:text-6xl font-black text-white tracking-tighter">
                         Bookings<span className="text-primary">.</span>
                     </h1>
                 </div>
 
-                <div className="flex bg-white/5 p-1 rounded-xl md:rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
+                <div className="flex bg-white/5 p-1 rounded-xl md:rounded-2xl border border-white/5 overflow-x-auto scrollbar-hide">
                     {["all", "pending", "confirmed", "completed", "cancelled"].map((f) => (
                         <button
                             key={f}
@@ -80,16 +80,16 @@ export default function AppointmentManager() {
             </header>
 
             {/* Stats Overview */}
-            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                 {[
                     { label: "Total Bookings", value: stats.total, color: "text-white" },
                     { label: "Pending Review", value: stats.pending, color: "text-primary" },
                     { label: "Confirmed", value: stats.confirmed, color: "text-green-500" },
                     { label: "Completed", value: stats.completed, color: "text-purple-500" },
                 ].map((stat, i) => (
-                    <div key={i} className="glass-dark border border-white/5 p-6 rounded-[2rem] text-center">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">{stat.label}</p>
-                        <p className={`text-3xl font-black ${stat.color}`}>{stat.value}</p>
+                    <div key={i} className="glass-dark border border-white/5 p-4 md:p-6 rounded-2xl md:rounded-[2rem] text-center">
+                        <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-500 mb-1">{stat.label}</p>
+                        <p className={`text-2xl md:text-3xl font-black ${stat.color}`}>{stat.value}</p>
                     </div>
                 ))}
             </div>
@@ -118,7 +118,7 @@ export default function AppointmentManager() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     onClick={() => setSelectedAppId(app._id)}
-                                    className={`p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border transition-all cursor-pointer group ${selectedAppId === app._id
+                                    className={`p-3 md:p-6 rounded-3xl border transition-all cursor-pointer group ${selectedAppId === app._id
                                         ? "bg-primary/10 border-primary/30"
                                         : "bg-white/5 border-white/5 hover:border-white/10"
                                         }`}
@@ -137,9 +137,9 @@ export default function AppointmentManager() {
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-3 md:gap-6">
-                                            <div className="text-right hidden xs:block">
-                                                <p className="text-sm font-black text-gray-400 mb-1">{app.serviceName}</p>
+                                        <div className="flex items-center gap-2 md:gap-6">
+                                            <div className="text-right hidden sm:block">
+                                                <p className="text-xs md:text-sm font-black text-gray-400 mb-1">{app.serviceName}</p>
                                                 <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full inline-block ${app.status === "confirmed" ? "bg-green-500/10 text-green-500" :
                                                     app.status === "pending" ? "bg-primary/20 text-primary" : "bg-gray-800 text-gray-400"
                                                     }`}>
@@ -238,33 +238,33 @@ export default function AppointmentManager() {
 
                 {/* Sidebar - Availability Management */}
                 <div className="lg:col-span-4 space-y-8">
-                    <div className="glass-dark border border-white/5 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem]">
-                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight mb-6">Calendar Summary</h2>
-                        <div className="space-y-4">
+                    <div className="glass-dark border border-white/5 p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem]">
+                        <h2 className="text-lg md:text-2xl font-black text-white tracking-tight mb-6">Calendar Summary</h2>
+                        <div className="space-y-3 md:space-y-4">
                             {/* Simple grouped view */}
                             {Array.from({ length: 5 }).map((_, i) => {
-                                const targetDate = format(addDays(new Date(), i), "yyyy-MM-dd");
-                                const dayApps = appointments.filter(a => a.date === targetDate && a.status !== "cancelled");
+                                const date = addDays(new Date(), i);
+                                const dayAppointments = appointments?.filter(app =>
+                                    format(new Date(app.date), 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+                                ) || [];
+
                                 return (
-                                    <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                                    <div key={i} className="flex items-center justify-between p-3 md:p-4 bg-white/5 rounded-2xl border border-white/5">
                                         <div>
-                                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                                                {i === 0 ? "Today" : i === 1 ? "Tomorrow" : format(new Date(targetDate), "EEEE")}
+                                            <p className="text-white font-bold text-sm">{format(date, 'EEE, MMM d')}</p>
+                                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">
+                                                {dayAppointments.length} Bookings
                                             </p>
-                                            <p className="text-white font-bold">{format(new Date(targetDate), "MMM do")}</p>
                                         </div>
-                                        <div className="text-right">
-                                            <p className={`text-xl font-black ${dayApps.length > 0 ? "text-primary" : "text-gray-700"}`}>
-                                                {dayApps.length}
-                                            </p>
-                                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Slots Taken</p>
+                                        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${dayAppointments.length > 5 ? "bg-red-500/20 text-red-500" : "bg-green-500/20 text-green-500"
+                                            }`}>
+                                            {dayAppointments.length > 5 ? "Busy" : "Available"}
                                         </div>
                                     </div>
-                                )
+                                );
                             })}
                         </div>
                     </div>
-
                     <div className="bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-8 rounded-[2.5rem] relative overflow-hidden group">
                         <div className="relative z-10">
                             <h3 className="text-xl font-black text-white mb-2">Block Out Dates</h3>
