@@ -25,8 +25,10 @@ http.route({
             "PRODID:-//BraidByTina//BookingSystem//EN",
             "CALSCALE:GREGORIAN",
             "METHOD:PUBLISH",
-            "X-WR-CALNAME:BraidByTina Appointments",
-            "X-WR-TIMEZONE:America/Nassau", // Default to Bahamas/Eastern
+            "X-WR-CALNAME:BraidByTina",
+            "X-WR-TIMEZONE:America/Nassau",
+            "X-PUBLISHED-TTL:PT15M",
+            "REFRESH-INTERVAL;VALUE=DURATION:PT15M",
         ];
 
         for (const app of data) {
