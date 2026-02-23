@@ -16,7 +16,7 @@ export const createAppointment = mutation({
     handler: async (ctx, args) => {
         return await ctx.db.insert("appointments", {
             ...args,
-            status: "pending",
+            status: "confirmed",
         });
     },
 });

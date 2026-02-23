@@ -50,7 +50,25 @@ export default function BookingFlow() {
     );
 
     const takenSlots = dayAppointments?.map(app => app.timeSlot) || [];
-    const availableSlots = timeSlots.filter(slot => !takenSlots.includes(slot));
+    const availableSlots = timeSlots.filter(slot => {
+        // First check if slot is already booked
+        if (takenSlots.includes(slot)) return false;
+
+        // Then check if it's today and the time has already passed
+        if (selectedDate && isSameDay(selectedDate, new Date())) {
+            const [time, ampm] = slot.split(" ");
+            let [hours, minutes] = time.split(":").map(Number);
+            if (ampm === "PM" && hours !== 12) hours += 12;
+            if (ampm === "AM" && hours === 12) hours = 0;
+
+            const slotTime = new Date();
+            slotTime.setHours(hours, minutes, 0, 0);
+
+            return slotTime > new Date();
+        }
+
+        return true;
+    });
 
     const handleServiceSelect = (service: any) => {
         setSelectedService(service);
