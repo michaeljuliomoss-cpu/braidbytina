@@ -32,7 +32,7 @@ export default function AppointmentManager() {
 
     const copyIcalLink = () => {
         const siteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL || "";
-        const icalUrl = `${siteUrl}/ical?token=braidbytina-calendar-secret-2025`;
+        const icalUrl = `${siteUrl}/ical?token=braidbytina-calendar-secret-2026`;
         navigator.clipboard.writeText(icalUrl);
         setCopying(true);
         setTimeout(() => setCopying(false), 2000);
