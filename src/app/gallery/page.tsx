@@ -7,23 +7,7 @@ import { Sparkles, Camera } from "lucide-react";
 
 export default function GalleryPage() {
     const photos = useQuery(api.gallery.getGallery) || [];
-
-    const placeholderPhotos = [
-        { url: "/images/knotless_braids_1771781969882.png", caption: "Knotless Perfection" },
-        { url: "/images/butterfly_locs_1771782031798.png", caption: "Boho Butterfly Locs" },
-        { url: "/images/stitch_braids_1771782056618.png", caption: "Neat Stitch Braids" },
-        { url: "/images/fulani_braids_1771782085714.png", caption: "Fulani Magic" },
-        { url: "/images/knotless_braids_1771781969882.png", caption: "Signature Knotless" },
-        { url: "/images/butterfly_locs_1771782031798.png", caption: "Distressed Locs" },
-        { url: "/images/stitch_braids_1771782056618.png", caption: "Sleek Cornrows" },
-        { url: "/images/fulani_braids_1771782085714.png", caption: "Tribal Braids" },
-        { url: "/images/knotless_braids_1771781969882.png", caption: "Jumbo Knotless" },
-        { url: "/images/butterfly_locs_1771782031798.png", caption: "Long Butterfly Locs" },
-        { url: "/images/stitch_braids_1771782056618.png", caption: "Creative Stitch" },
-        { url: "/images/fulani_braids_1771782085714.png", caption: "Designer Parts" },
-    ];
-
-    const displayPhotos = photos.length > 0 ? photos : placeholderPhotos;
+    const displayPhotos = photos;
 
     return (
         <div className="pt-32 pb-24 min-h-screen bg-white">

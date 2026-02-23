@@ -8,7 +8,7 @@ export const getGallery = query({
         return await Promise.all(
             images.map(async (image) => ({
                 ...image,
-                url: await ctx.storage.getUrl(image.imageId),
+                url: image.imageId ? await ctx.storage.getUrl(image.imageId) : image.imageUrl,
             }))
         );
     },
@@ -16,7 +16,8 @@ export const getGallery = query({
 
 export const addImage = mutation({
     args: {
-        imageId: v.id("_storage"),
+        imageId: v.optional(v.id("_storage")),
+        imageUrl: v.optional(v.string()),
         caption: v.optional(v.string()),
         order: v.optional(v.number()),
     },

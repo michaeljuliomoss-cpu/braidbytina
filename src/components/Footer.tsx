@@ -3,9 +3,13 @@
 import Link from "next/link";
 import { Instagram, MapPin, Phone } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export default function Footer() {
     const pathname = usePathname();
+    const contentData = useQuery(api.content.getAllContent) as any;
+    const logoUrl = contentData?.logoUrl || "/images/briadbytinatranparent.png";
 
     // Don't show footer on admin pages
     if (pathname?.startsWith("/admin")) return null;
@@ -15,7 +19,7 @@ export default function Footer() {
                 <div className="space-y-8">
                     <Link href="/" className="group flex items-center gap-3">
                         <div className="w-24 h-24 flex items-center justify-center p-0 group-hover:scale-110 transition-transform overflow-hidden">
-                            <img src="/images/briadbytinatranparent.png" alt="BraidsByTina Logo" className="w-full h-full object-contain" />
+                            <img src={logoUrl} alt="BraidsByTina Logo" className="w-full h-full object-contain" />
                         </div>
                         <span className="text-3xl font-black tracking-tighter text-secondary">
                             BraidsByTina<span className="text-primary italic">.</span>

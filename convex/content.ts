@@ -5,11 +5,25 @@ export const getAllContent = query({
     args: {},
     handler: async (ctx) => {
         const rawContent = await ctx.db.query("siteContent").collect();
-        // Reduce into an easy to use dictionary
-        return rawContent.reduce((acc, curr) => {
+        const contentMap = rawContent.reduce((acc, curr) => {
             acc[curr.key] = curr.value;
             return acc;
         }, {} as Record<string, string>);
+
+        // Resolve image URLs
+        const logoUrl = contentMap.logoStorageId
+            ? await ctx.storage.getUrl(contentMap.logoStorageId as any)
+            : contentMap.logoUrl;
+
+        const aboutImageUrl = contentMap.aboutImageStorageId
+            ? await ctx.storage.getUrl(contentMap.aboutImageStorageId as any)
+            : contentMap.aboutImageUrl;
+
+        return {
+            ...contentMap,
+            logoUrl: logoUrl || "",
+            aboutImageUrl: aboutImageUrl || "",
+        };
     },
 });
 

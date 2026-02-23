@@ -28,7 +28,8 @@ export default defineSchema({
     }).index("by_token", ["token"]),
 
     gallery: defineTable({
-        imageId: v.id("_storage"),
+        imageId: v.optional(v.id("_storage")),
+        imageUrl: v.optional(v.string()),
         caption: v.optional(v.string()),
         order: v.optional(v.number()),
     }),
@@ -41,4 +42,22 @@ export default defineSchema({
         imageUrl: v.optional(v.string()), // For local placeholders
         inStock: v.boolean(),
     }).index("by_name", ["name"]),
+
+    appointments: defineTable({
+        customerName: v.string(),
+        customerEmail: v.string(),
+        customerPhone: v.string(),
+        serviceId: v.id("services"),
+        serviceName: v.string(), // Snapshot
+        date: v.string(),        // "YYYY-MM-DD"
+        timeSlot: v.string(),    // "09:00 AM"
+        status: v.string(),      // "pending", "confirmed", "completed", "cancelled"
+        totalPrice: v.number(),
+        notes: v.optional(v.string()),
+    }).index("by_date", ["date"]),
+
+    blockedDates: defineTable({
+        date: v.string(),
+        reason: v.optional(v.string()),
+    }).index("by_date", ["date"]),
 });

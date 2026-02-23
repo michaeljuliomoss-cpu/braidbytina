@@ -14,7 +14,8 @@ import {
     Menu,
     X,
     Sparkles,
-    ShoppingBag
+    ShoppingBag,
+    Calendar
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -50,8 +51,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     const menuItems = [
         { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+        { name: "Bookings", href: "/admin/appointments", icon: Calendar },
         { name: "Services", href: "/admin/services", icon: Scissors },
-        { name: "Store", href: "/admin/products", icon: ShoppingBag },
         { name: "Portfolio", href: "/admin/gallery", icon: Sparkles },
         { name: "Site Content", href: "/admin/content", icon: FileText },
     ];
@@ -79,15 +80,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="min-h-screen bg-black flex">
             {/* Sidebar - Desktop */}
             <aside className="hidden lg:flex w-72 flex-col bg-secondary/50 border-r border-white/5 backdrop-blur-xl fixed inset-y-0 z-50">
-                <div className="p-8 border-b border-white/5 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
+                <Link href="/" className="p-8 border-b border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors group">
+                    <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30 group-hover:scale-110 transition-transform">
                         <Sparkles className="w-6 h-6 text-primary" />
                     </div>
                     <div>
                         <h2 className="text-xl font-black tracking-tighter text-white">Admin</h2>
-                        <p className="text-[10px] text-primary font-bold uppercase tracking-widest leading-none mt-1">BraidsByTina Suite</p>
+                        <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest leading-none mt-1">BraidsByTina Suite</p>
                     </div>
-                </div>
+                </Link>
 
                 <nav className="flex-grow p-6 space-y-2 mt-4">
                     {menuItems.map((item) => {
@@ -124,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <main className="flex-grow lg:pl-72 flex flex-col min-h-screen">
                 {/* Header - Mobile */}
                 <header className="lg:hidden h-20 glass-dark border-b border-white/5 px-6 flex items-center justify-between sticky top-0 z-40">
-                    <Link href="/" className="text-xl font-bold tracking-tighter">
+                    <Link href="/" className="text-xl font-bold tracking-tighter text-white hover:text-primary transition-colors">
                         BraidsByTina<span className="text-primary">.</span>
                     </Link>
                     <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-white">
@@ -156,13 +157,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             className="fixed inset-y-0 left-0 w-80 bg-secondary z-[70] lg:hidden flex flex-col border-r border-white/10"
                         >
                             <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30">
+                                <Link href="/" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-3 group">
+                                    <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30 group-hover:scale-110 transition-transform">
                                         <Sparkles className="w-6 h-6 text-primary" />
                                     </div>
                                     <h2 className="text-xl font-black tracking-tighter text-white">Admin</h2>
-                                </div>
-                                <button onClick={() => setIsSidebarOpen(false)} className="text-white">
+                                </Link>
+                                <button onClick={() => setIsSidebarOpen(false)} className="text-white hover:text-primary transition-colors">
                                     <X size={28} />
                                 </button>
                             </div>

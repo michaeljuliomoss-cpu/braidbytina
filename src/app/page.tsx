@@ -11,21 +11,24 @@ import Link from "next/link";
 export default function Home() {
   const services = useQuery(api.services.getServices) || [];
   const photos = useQuery(api.gallery.getGallery) || [];
-  const contentData = useQuery(api.content.getAllContent);
+  const contentData = useQuery(api.content.getAllContent) as any;
 
   // Merge dynamic content with defaults to prevent flashing empty text
   const content = {
     heroTitle: contentData?.heroTitle || "Premium Braiding Services.",
     heroSubtitle: contentData?.heroSubtitle || "Elegance in every strand. Specialized in knotless braids and creative styling.",
+    logoUrl: contentData?.logoUrl || "/images/briadbytinatranparent.png",
+    bio: contentData?.bio || "With years of professional experience, Tina crafts precision braids that don't just look good—they feel good. We prioritize hair health and individual transformation.",
+    aboutImageUrl: contentData?.aboutImageUrl || "/images/media__1771778558925.png"
   };
 
   const ref = useRef(null);
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Hero Section - Clean White Makeover */}
-      <section ref={ref} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-white pt-32 pb-12 md:pt-40 md:pb-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-white to-white z-0" />
+      {/* Hero Section - Premium Dark Makeover */}
+      <section ref={ref} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-secondary pt-32 pb-12 md:pt-40 md:pb-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-secondary to-secondary z-0" />
 
         <div className="relative z-20 container mx-auto px-6 text-center max-w-5xl">
           <motion.div
@@ -42,7 +45,7 @@ export default function Home() {
               className="mb-6 md:mb-10 drop-shadow-[0_20px_50px_rgba(242,138,178,0.3)]"
             >
               <img
-                src="/images/briadbytinatranparent.png"
+                src={content.logoUrl}
                 alt="BraidsByTina Logo"
                 className="w-full max-w-[300px] md:max-w-[500px] h-auto px-4 md:px-0"
               />
@@ -61,7 +64,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="text-4xl md:text-9xl font-black tracking-tighter mb-6 md:mb-8 text-secondary leading-[0.85]"
+              className="text-4xl md:text-9xl font-black tracking-tighter mb-6 md:mb-8 text-white leading-[0.85]"
             >
               {content.heroTitle}
             </motion.h1>
@@ -70,7 +73,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="text-base md:text-2xl font-bold text-gray-400 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-4"
+              className="text-base md:text-2xl font-bold text-gray-200/60 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-4"
             >
               {content.heroSubtitle}
             </motion.p>
@@ -139,7 +142,7 @@ export default function Home() {
         <div className="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="relative group order-2 lg:order-1">
             <div className="aspect-[4/5] rounded-[3rem] overflow-hidden border border-black/5 relative z-10 shadow-2xl">
-              <img src="/images/media__1771778558925.png" alt="Tina" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" />
+              <img src={content.aboutImageUrl} alt="Tina" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" />
             </div>
             <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-primary/10 rounded-full blur-3xl -z-0" />
           </div>
@@ -149,7 +152,7 @@ export default function Home() {
               Confidence, <br /><span className="text-primary italic">Redefined.</span>
             </h2>
             <p className="text-xl text-gray-500 leading-relaxed font-bold">
-              With years of professional experience, Tina crafts precision braids that don't just look good—they feel good. We prioritize hair health and individual transformation.
+              {content.bio}
             </p>
             <Link href="/about" className="inline-flex items-center gap-2 text-primary font-black text-2xl border-b-4 border-primary pb-2 hover:gap-4 transition-all">
               Discover Our Story <ArrowRight size={28} />
@@ -189,4 +192,3 @@ export default function Home() {
     </div>
   );
 }
-

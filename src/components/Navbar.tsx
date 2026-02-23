@@ -5,11 +5,15 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 export default function Navbar() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const contentData = useQuery(api.content.getAllContent) as any;
+    const logoUrl = contentData?.logoUrl || "/images/briadbytinatranparent.png";
 
     // Don't show navbar on admin pages
     if (pathname?.startsWith("/admin")) return null;
@@ -38,9 +42,10 @@ export default function Navbar() {
             <div className="container mx-auto px-6 md:px-12 flex items-center justify-between">
                 <Link href="/" className="group flex items-center gap-3">
                     <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden px-1 py-1">
-                        <img src="/images/briadbytinatranparent.png" alt="BraidsByTina Logo" className="w-full h-full object-contain" />
+                        <img src={logoUrl} alt="BraidsByTina Logo" className="w-full h-full object-contain" />
                     </div>
-                    <span className="text-2xl font-black tracking-tighter text-secondary">
+                    <span className={`text-2xl font-black tracking-tighter transition-colors ${scrolled ? "text-secondary" : (pathname === "/" ? "text-white" : "text-secondary")
+                        }`}>
                         BraidsByTina<span className="text-primary italic">.</span>
                     </span>
                 </Link>
@@ -51,7 +56,8 @@ export default function Navbar() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-secondary hover:text-primary font-bold transition-all hover:scale-105"
+                            className={`${scrolled ? "text-secondary" : (pathname === "/" ? "text-white" : "text-secondary")
+                                } hover:text-primary font-bold transition-all hover:scale-105`}
                         >
                             {link.name}
                         </Link>
@@ -66,7 +72,8 @@ export default function Navbar() {
 
                 {/* Mobile Toggle */}
                 <button
-                    className="md:hidden text-secondary hover:text-primary"
+                    className={`md:hidden transition-colors ${scrolled ? "text-secondary" : (pathname === "/" ? "text-white" : "text-secondary")
+                        } hover:text-primary`}
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     {isOpen ? <X size={28} /> : <Menu size={28} />}

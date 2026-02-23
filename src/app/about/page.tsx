@@ -6,13 +6,16 @@ import { motion } from "framer-motion";
 import { Clock, ShieldCheck, MapPin, Instagram, Phone } from "lucide-react";
 
 export default function AboutPage() {
-    const contentData = useQuery(api.content.getAllContent);
+    const contentData = useQuery(api.content.getAllContent) as any;
 
     // Merge dynamic content with defaults to prevent flashing empty text
     const content = {
         hours: contentData?.hours || "Mon-Sat: 9am - 7pm\nSun: Closed",
         depositPolicy: contentData?.depositPolicy || "A $25 non-refundable deposit is required to secure your appointment.",
-        bio: contentData?.bio || "With a passion for precision and a commitment to hair health, I've spent years perfecting the art of protective styling. My goal is to make every client feel empowered and beautiful, one braid at a time."
+        bio: contentData?.bio || "With a passion for precision and a commitment to hair health, I've spent years perfecting the art of protective styling. My goal is to make every client feel empowered and beautiful, one braid at a time.",
+        aboutImageUrl: contentData?.aboutImageUrl || "/images/media__1771778558925.png",
+        aboutTitle: contentData?.aboutTitle || "The Hands Behind the Hair.",
+        aboutTagline: contentData?.aboutTagline || "Meet Tina"
     };
 
     return (
@@ -26,7 +29,7 @@ export default function AboutPage() {
                     >
                         <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl border border-black/5">
                             <img
-                                src="/images/media__1771778558925.png"
+                                src={content.aboutImageUrl}
                                 alt="Tina"
                                 className="w-full h-full object-cover"
                             />
@@ -42,9 +45,9 @@ export default function AboutPage() {
                         className="space-y-12"
                     >
                         <div>
-                            <p className="text-primary font-bold uppercase tracking-widest mb-4">Meet Tina</p>
+                            <p className="text-primary font-bold uppercase tracking-widest mb-4">{content.aboutTagline}</p>
                             <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-secondary mb-6">
-                                The Hands Behind <span className="text-primary">the Hair.</span>
+                                {content.aboutTitle}
                             </h1>
                             <p className="text-xl text-gray-500 leading-relaxed font-bold">
                                 {content.bio}
