@@ -1,12 +1,10 @@
 @import "tailwindcss";
 
-@layer theme {
-  :root {
-    --color-primary: #f28ab2;
-    --color-primary-dark: #d96a92;
-    --color-secondary: #1a1a1a;
-    --color-accent: #f28ab2;
-  }
+@theme {
+  --color-primary: #f28ab2;
+  --color-primary-dark: #d96a92;
+  --color-secondary: #1a1a1a;
+  --color-accent: #f28ab2;
 }
 
 :root {
@@ -44,15 +42,4 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-@layer utilities {
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
 }

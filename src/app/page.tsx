@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Hero Section - Refined Light Aesthetic */}
+      {/* Hero Section - Clean White Makeover Style */}
       <section ref={ref} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-white pt-32 pb-12 md:pt-40 md:pb-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-white to-white z-0" />
 
@@ -73,7 +73,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="text-base md:text-2xl font-bold text-secondary/60 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-4"
+              className="text-base md:text-2xl font-bold text-gray-400 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-4"
             >
               {content.heroSubtitle}
             </motion.p>
