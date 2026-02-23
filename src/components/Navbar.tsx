@@ -44,8 +44,7 @@ export default function Navbar() {
                     <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden px-1 py-1">
                         <img src={logoUrl} alt="BraidsByTina Logo" className="w-full h-full object-contain" />
                     </div>
-                    <span className={`text-2xl font-black tracking-tighter transition-colors ${scrolled ? "text-secondary" : (pathname === "/" ? "text-white" : "text-secondary")
-                        }`}>
+                    <span className={`text-2xl font-black tracking-tighter transition-colors text-secondary`}>
                         BraidsByTina<span className="text-primary italic">.</span>
                     </span>
                 </Link>
@@ -56,8 +55,7 @@ export default function Navbar() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className={`${scrolled ? "text-secondary" : (pathname === "/" ? "text-white" : "text-secondary")
-                                } hover:text-primary font-bold transition-all hover:scale-105`}
+                            className={`text-secondary hover:text-primary font-bold transition-all hover:scale-105`}
                         >
                             {link.name}
                         </Link>
@@ -72,8 +70,7 @@ export default function Navbar() {
 
                 {/* Mobile Toggle */}
                 <button
-                    className={`md:hidden transition-colors ${scrolled ? "text-secondary" : (pathname === "/" ? "text-white" : "text-secondary")
-                        } hover:text-primary`}
+                    className={`md:hidden transition-colors text-secondary hover:text-primary`}
                     onClick={() => setIsOpen(!isOpen)}
                 >
                     {isOpen ? <X size={28} /> : <Menu size={28} />}

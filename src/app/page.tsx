@@ -26,9 +26,9 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      {/* Hero Section - Premium Dark Makeover */}
-      <section ref={ref} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-secondary pt-32 pb-12 md:pt-40 md:pb-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-secondary to-secondary z-0" />
+      {/* Hero Section - Refined Light Aesthetic */}
+      <section ref={ref} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden bg-white pt-32 pb-12 md:pt-40 md:pb-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-white to-white z-0" />
 
         <div className="relative z-20 container mx-auto px-6 text-center max-w-5xl">
           <motion.div
@@ -64,7 +64,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="text-4xl md:text-9xl font-black tracking-tighter mb-6 md:mb-8 text-white leading-[0.85]"
+              className="text-4xl md:text-9xl font-black tracking-tighter mb-6 md:mb-8 text-secondary leading-[0.85]"
             >
               {content.heroTitle}
             </motion.h1>
@@ -73,7 +73,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="text-base md:text-2xl font-bold text-gray-200/60 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-4"
+              className="text-base md:text-2xl font-bold text-secondary/60 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-4"
             >
               {content.heroSubtitle}
             </motion.p>
