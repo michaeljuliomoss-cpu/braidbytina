@@ -11,12 +11,14 @@
 import type * as admin from "../admin.js";
 import type * as appointments from "../appointments.js";
 import type * as content from "../content.js";
+import type * as emails from "../emails.js";
 import type * as gallery from "../gallery.js";
 import type * as http from "../http.js";
 import type * as products from "../products.js";
 import type * as seed from "../seed.js";
 import type * as seedGallery from "../seedGallery.js";
 import type * as services from "../services.js";
+import type * as whatsapp from "../whatsapp.js";
 
 import type {
   ApiFromModules,
@@ -28,12 +30,14 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   appointments: typeof appointments;
   content: typeof content;
+  emails: typeof emails;
   gallery: typeof gallery;
   http: typeof http;
   products: typeof products;
   seed: typeof seed;
   seedGallery: typeof seedGallery;
   services: typeof services;
+  whatsapp: typeof whatsapp;
 }>;
 
 /**

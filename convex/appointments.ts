@@ -22,7 +22,14 @@ export const createAppointment = mutation({
 
         // Trigger email notification to Tina
         await ctx.scheduler.runAfter(0, api.emails.sendBookingEmail, {
-            ...args
+            customerName: args.customerName,
+            customerEmail: args.customerEmail,
+            customerPhone: args.customerPhone,
+            serviceName: args.serviceName,
+            date: args.date,
+            timeSlot: args.timeSlot,
+            totalPrice: args.totalPrice,
+            notes: args.notes,
         });
 
         // Trigger WhatsApp notification to the group
