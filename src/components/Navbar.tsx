@@ -12,19 +12,21 @@ export default function Navbar() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const contentData = useQuery(api.content.getAllContent) as any;
     const logoUrl = contentData?.logoUrl || "/images/briadbytinatranparent.png";
 
-    // Don't show navbar on admin pages
-    if (pathname?.startsWith("/admin")) return null;
-
     useEffect(() => {
+        setMounted(true);
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    // Prevent hydration mismatch and hide on admin
+    if (!mounted || pathname?.startsWith("/admin")) return null;
 
     const navLinks = [
         { name: "Home", href: "/" },

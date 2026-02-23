@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Instagram, MapPin, Phone } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -8,11 +9,16 @@ import { api } from "../../convex/_generated/api";
 
 export default function Footer() {
     const pathname = usePathname();
+    const [mounted, setMounted] = useState(false);
     const contentData = useQuery(api.content.getAllContent) as any;
     const logoUrl = contentData?.logoUrl || "/images/briadbytinatranparent.png";
 
-    // Don't show footer on admin pages
-    if (pathname?.startsWith("/admin")) return null;
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Prevent hydration mismatch and hide on admin
+    if (!mounted || pathname?.startsWith("/admin")) return null;
     return (
         <footer className="bg-white text-gray-500 py-16 lg:py-24 border-t border-black/5">
             <div className="container mx-auto px-6 lg:px-12 grid grid-cols-1 md:grid-cols-3 gap-16">

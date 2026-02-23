@@ -145,8 +145,8 @@ export default function ContentManager() {
         <div className="space-y-12 pb-20 max-w-5xl">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 className="text-5xl font-black text-white tracking-tighter mb-2">Content Manager</h1>
-                    <p className="text-gray-500 font-medium">Refine your brand's presence across the entire site.</p>
+                    <h1 className="text-3xl md:text-5xl font-black text-white tracking-tighter mb-2">Content Manager</h1>
+                    <p className="text-gray-500 font-medium text-sm md:text-base">Refine your brand's presence across the entire site.</p>
                 </div>
                 <button
                     onClick={handleSave}
@@ -169,12 +169,12 @@ export default function ContentManager() {
             </header>
 
             {/* Tab Navigation */}
-            <div className="flex flex-wrap gap-2 p-2 bg-white/5 rounded-[2rem] border border-white/10 w-fit">
+            <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-2 p-2 bg-white/5 rounded-[2rem] border border-white/10 w-full md:w-fit px-4 md:px-2">
                 {tabs.map((tab) => (
                     <button
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-black text-sm transition-all ${activeTab === tab.id
+                        className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-black text-sm transition-all whitespace-nowrap ${activeTab === tab.id
                             ? "bg-primary text-white shadow-lg shadow-primary/20"
                             : "text-gray-500 hover:text-white hover:bg-white/5"
                             }`}

@@ -58,19 +58,19 @@ export default function AppointmentManager() {
     return (
         <div className="space-y-10">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <p className="text-primary font-black uppercase tracking-widest text-xs">Management</p>
-                    <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter">
+                <div className="space-y-1">
+                    <p className="text-primary font-black uppercase tracking-widest text-[10px] md:text-xs">Management</p>
+                    <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter">
                         Bookings<span className="text-primary">.</span>
                     </h1>
                 </div>
 
-                <div className="flex bg-white/5 p-1.5 rounded-2xl border border-white/5">
+                <div className="flex bg-white/5 p-1 rounded-xl md:rounded-2xl border border-white/5 overflow-x-auto no-scrollbar">
                     {["all", "pending", "confirmed", "completed", "cancelled"].map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${filter === f ? "bg-primary text-white shadow-lg" : "text-gray-500 hover:text-white"
+                            className={`px-3 md:px-4 py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${filter === f ? "bg-primary text-white shadow-lg" : "text-gray-500 hover:text-white"
                                 }`}
                         >
                             {f}
@@ -80,7 +80,7 @@ export default function AppointmentManager() {
             </header>
 
             {/* Stats Overview */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
                 {[
                     { label: "Total Bookings", value: stats.total, color: "text-white" },
                     { label: "Pending Review", value: stats.pending, color: "text-primary" },
@@ -118,30 +118,30 @@ export default function AppointmentManager() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     onClick={() => setSelectedAppId(app._id)}
-                                    className={`p-6 rounded-[2.5rem] border transition-all cursor-pointer group ${selectedAppId === app._id
-                                            ? "bg-primary/10 border-primary/30"
-                                            : "bg-white/5 border-white/5 hover:border-white/10"
+                                    className={`p-4 md:p-6 rounded-3xl md:rounded-[2.5rem] border transition-all cursor-pointer group ${selectedAppId === app._id
+                                        ? "bg-primary/10 border-primary/30"
+                                        : "bg-white/5 border-white/5 hover:border-white/10"
                                         }`}
                                 >
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center border border-white/10 shrink-0">
-                                                <User className="w-8 h-8 text-white/20" />
+                                        <div className="flex items-center gap-3 md:gap-6">
+                                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-secondary flex items-center justify-center border border-white/10 shrink-0">
+                                                <User className="w-6 h-6 md:w-8 md:h-8 text-white/20" />
                                             </div>
                                             <div>
-                                                <h3 className="text-xl font-black text-white mb-1">{app.customerName}</h3>
-                                                <div className="flex items-center gap-4 text-sm font-bold text-gray-500">
-                                                    <span className="flex items-center gap-1.5"><CalendarIcon size={14} className="text-primary" /> {format(new Date(app.date), "MMM do")}</span>
-                                                    <span className="flex items-center gap-1.5"><Clock size={14} className="text-primary" /> {app.timeSlot}</span>
+                                                <h3 className="text-lg md:text-xl font-black text-white mb-0.5 md:mb-1 leading-tight">{app.customerName}</h3>
+                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] md:text-sm font-bold text-gray-500">
+                                                    <span className="flex items-center gap-1.5"><CalendarIcon size={12} className="text-primary" /> {format(new Date(app.date), "MMM do")}</span>
+                                                    <span className="flex items-center gap-1.5"><Clock size={12} className="text-primary" /> {app.timeSlot}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-6">
-                                            <div className="text-right hidden sm:block">
+                                        <div className="flex items-center gap-3 md:gap-6">
+                                            <div className="text-right hidden xs:block">
                                                 <p className="text-sm font-black text-gray-400 mb-1">{app.serviceName}</p>
                                                 <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full inline-block ${app.status === "confirmed" ? "bg-green-500/10 text-green-500" :
-                                                        app.status === "pending" ? "bg-primary/20 text-primary" : "bg-gray-800 text-gray-400"
+                                                    app.status === "pending" ? "bg-primary/20 text-primary" : "bg-gray-800 text-gray-400"
                                                     }`}>
                                                     {app.status}
                                                 </div>
@@ -159,61 +159,61 @@ export default function AppointmentManager() {
                                                 exit={{ height: 0, opacity: 0 }}
                                                 className="overflow-hidden"
                                             >
-                                                <div className="pt-8 mt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-8">
-                                                    <div className="space-y-6">
-                                                        <div className="grid grid-cols-2 gap-4">
-                                                            <a href={`tel:${app.customerPhone}`} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
-                                                                <Phone size={18} className="text-primary" />
+                                                <div className="pt-8 mt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                                                    <div className="space-y-4 md:space-y-6">
+                                                        <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 md:gap-4">
+                                                            <a href={`tel:${app.customerPhone}`} className="flex items-center gap-3 p-3 md:p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
+                                                                <Phone size={16} className="text-primary" />
                                                                 <div className="overflow-hidden">
-                                                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Phone</p>
-                                                                    <p className="text-white font-bold truncate group-hover/link:text-primary">{app.customerPhone}</p>
+                                                                    <p className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Phone</p>
+                                                                    <p className="text-white text-xs md:text-base font-bold truncate group-hover/link:text-primary">{app.customerPhone}</p>
                                                                 </div>
                                                             </a>
-                                                            <a href={`mailto:${app.customerEmail}`} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
-                                                                <Mail size={18} className="text-primary" />
+                                                            <a href={`mailto:${app.customerEmail}`} className="flex items-center gap-3 p-3 md:p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
+                                                                <Mail size={16} className="text-primary" />
                                                                 <div className="overflow-hidden">
-                                                                    <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Email</p>
-                                                                    <p className="text-white font-bold truncate group-hover/link:text-primary">{app.customerEmail}</p>
+                                                                    <p className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Email</p>
+                                                                    <p className="text-white text-xs md:text-base font-bold truncate group-hover/link:text-primary">{app.customerEmail}</p>
                                                                 </div>
                                                             </a>
                                                         </div>
                                                         <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
                                                             <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Notes from Customer</p>
-                                                            <p className="text-white font-medium text-sm leading-relaxed italic">"{app.notes || "No special requests"}"</p>
+                                                            <p className="text-white font-medium text-xs md:text-sm leading-relaxed italic line-clamp-4">"{app.notes || "No special requests"}"</p>
                                                         </div>
                                                     </div>
 
-                                                    <div className="space-y-6">
-                                                        <div className="flex gap-3">
+                                                    <div className="space-y-4 md:space-y-6">
+                                                        <div className="flex flex-col xs:flex-row gap-3">
                                                             {app.status === "pending" && (
                                                                 <button
                                                                     onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "confirmed"); }}
-                                                                    className="flex-1 bg-green-500 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all"
+                                                                    className="flex-1 bg-green-500 text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
                                                                 >
-                                                                    <CheckCircle2 size={18} /> Confirm
+                                                                    <CheckCircle2 size={16} /> Confirm
                                                                 </button>
                                                             )}
                                                             {app.status === "confirmed" && (
                                                                 <button
                                                                     onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "completed"); }}
-                                                                    className="flex-1 bg-purple-600 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all"
+                                                                    className="flex-1 bg-purple-600 text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
                                                                 >
-                                                                    <CheckCircle2 size={18} /> Complete
+                                                                    <CheckCircle2 size={16} /> Complete
                                                                 </button>
                                                             )}
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "cancelled"); }}
-                                                                className="flex-1 bg-red-500/10 text-red-500 font-black py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition-all"
+                                                                className="flex-1 bg-red-500/10 text-red-500 font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition-all text-sm"
                                                             >
-                                                                <XCircle size={18} /> Cancel
+                                                                <XCircle size={16} /> Cancel
                                                             </button>
                                                         </div>
                                                         <a
                                                             href={`https://wa.me/${app.customerPhone.replace(/[^0-9]/g, '')}?text=Hi ${app.customerName.split(' ')[0]}, this is Tina from Braids by Tina regarding your ${app.serviceName} appointment on ${format(new Date(app.date), "MMM do")}.`}
                                                             target="_blank"
-                                                            className="w-full bg-[#25D366] text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all"
+                                                            className="w-full bg-[#25D366] text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
                                                         >
-                                                            <MessageCircle size={20} /> Open WhatsApp
+                                                            <MessageCircle size={18} /> Open WhatsApp
                                                         </a>
                                                     </div>
                                                 </div>
@@ -238,18 +238,18 @@ export default function AppointmentManager() {
 
                 {/* Sidebar - Availability Management */}
                 <div className="lg:col-span-4 space-y-8">
-                    <div className="glass-dark border border-white/5 p-8 rounded-[2.5rem]">
-                        <h2 className="text-2xl font-black text-white tracking-tight mb-6">Calendar Summary</h2>
+                    <div className="glass-dark border border-white/5 p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem]">
+                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight mb-6">Calendar Summary</h2>
                         <div className="space-y-4">
                             {/* Simple grouped view */}
-                            {[0, 1, 2, 3, 4].map(dayOffset => {
-                                const targetDate = format(addDays(new Date(), dayOffset), "yyyy-MM-dd");
+                            {Array.from({ length: 5 }).map((_, i) => {
+                                const targetDate = format(addDays(new Date(), i), "yyyy-MM-dd");
                                 const dayApps = appointments.filter(a => a.date === targetDate && a.status !== "cancelled");
                                 return (
-                                    <div key={dayOffset} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+                                    <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
                                         <div>
                                             <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                                                {dayOffset === 0 ? "Today" : dayOffset === 1 ? "Tomorrow" : format(new Date(targetDate), "EEEE")}
+                                                {i === 0 ? "Today" : i === 1 ? "Tomorrow" : format(new Date(targetDate), "EEEE")}
                                             </p>
                                             <p className="text-white font-bold">{format(new Date(targetDate), "MMM do")}</p>
                                         </div>

@@ -80,7 +80,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="min-h-screen bg-black flex">
             {/* Sidebar - Desktop */}
             <aside className="hidden lg:flex w-72 flex-col bg-secondary/50 border-r border-white/5 backdrop-blur-xl fixed inset-y-0 z-50">
-                <Link href="/" className="p-8 border-b border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors group">
+                <Link href="/" prefetch={false} className="p-8 border-b border-white/5 flex items-center gap-3 hover:bg-white/5 transition-colors group">
                     <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30 group-hover:scale-110 transition-transform">
                         <Sparkles className="w-6 h-6 text-primary" />
                     </div>
@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <main className="flex-grow lg:pl-72 flex flex-col min-h-screen">
                 {/* Header - Mobile */}
                 <header className="lg:hidden h-20 glass-dark border-b border-white/5 px-6 flex items-center justify-between sticky top-0 z-40">
-                    <Link href="/" className="text-xl font-bold tracking-tighter text-white hover:text-primary transition-colors">
+                    <Link href="/" prefetch={false} className="text-xl font-bold tracking-tighter text-white hover:text-primary transition-colors">
                         BraidsByTina<span className="text-primary">.</span>
                     </Link>
                     <button onClick={() => setIsSidebarOpen(true)} className="p-2 text-white">
@@ -157,7 +157,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             className="fixed inset-y-0 left-0 w-80 bg-secondary z-[70] lg:hidden flex flex-col border-r border-white/10"
                         >
                             <div className="p-8 border-b border-white/5 flex items-center justify-between">
-                                <Link href="/" onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-3 group">
+                                <Link href="/" prefetch={false} onClick={() => setIsSidebarOpen(false)} className="flex items-center gap-3 group">
                                     <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center border border-primary/30 group-hover:scale-110 transition-transform">
                                         <Sparkles className="w-6 h-6 text-primary" />
                                     </div>
