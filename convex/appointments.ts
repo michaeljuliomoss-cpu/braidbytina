@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { api } from "./_generated/api";
 
 export const createAppointment = mutation({
     args: {
@@ -14,10 +15,17 @@ export const createAppointment = mutation({
         notes: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
-        return await ctx.db.insert("appointments", {
+        const appointmentId = await ctx.db.insert("appointments", {
             ...args,
             status: "confirmed",
         });
+
+        // Trigger email notification to Tina
+        await ctx.scheduler.runAfter(0, api.emails.sendBookingEmail, {
+            ...args
+        });
+
+        return appointmentId;
     },
 });
 
