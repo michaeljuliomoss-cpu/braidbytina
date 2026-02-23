@@ -79,3 +79,20 @@ export const unblockDate = mutation({
         }
     },
 });
+export const getIcalData = query({
+    args: {},
+    handler: async (ctx) => {
+        const appointments = await ctx.db
+            .query("appointments")
+            .filter((q) => q.neq(q.field("status"), "cancelled"))
+            .collect();
+
+        const services = await ctx.db.query("services").collect();
+        const servicesMap = new Map(services.map(s => [s._id, s]));
+
+        return appointments.map(app => ({
+            ...app,
+            duration: servicesMap.get(app.serviceId)?.duration || "2 Hours"
+        }));
+    },
+});

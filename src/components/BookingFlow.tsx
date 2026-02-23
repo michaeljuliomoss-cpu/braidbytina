@@ -43,6 +43,15 @@ export default function BookingFlow() {
     // Hardcoded time slots for now - typically braiders have set start times
     const timeSlots = ["09:00 AM", "10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"];
 
+    // Fetch appointments for the selected date to hide taken slots
+    const dayAppointments = useQuery(
+        api.appointments.getAppointmentsByDate,
+        selectedDate ? { date: format(selectedDate, "yyyy-MM-dd") } : "skip"
+    );
+
+    const takenSlots = dayAppointments?.map(app => app.timeSlot) || [];
+    const availableSlots = timeSlots.filter(slot => !takenSlots.includes(slot));
+
     const handleServiceSelect = (service: any) => {
         setSelectedService(service);
         setCurrentStep("datetime");
@@ -96,7 +105,7 @@ export default function BookingFlow() {
                     return (
                         <div key={step} className="flex flex-col items-center gap-3">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black transition-all ${isActive ? "bg-primary text-white scale-110 shadow-lg shadow-primary/30" :
-                                    isCompleted ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400"
+                                isCompleted ? "bg-green-500 text-white" : "bg-gray-100 text-gray-400"
                                 }`}>
                                 {isCompleted ? <CheckCircle2 size={18} /> : idx + 1}
                             </div>
@@ -192,15 +201,17 @@ export default function BookingFlow() {
                                     </h4>
                                     {!selectedDate ? (
                                         <p className="text-gray-400 font-bold italic py-8 text-center text-sm">Please select a date first</p>
+                                    ) : availableSlots.length === 0 ? (
+                                        <p className="text-red-400 font-bold italic py-8 text-center text-sm">This day is fully booked!</p>
                                     ) : (
                                         <div className="grid grid-cols-2 gap-3">
-                                            {timeSlots.map((time) => (
+                                            {availableSlots.map((time) => (
                                                 <button
                                                     key={time}
                                                     onClick={() => setSelectedTime(time)}
                                                     className={`py-4 rounded-2xl font-black transition-all ${selectedTime === time
-                                                            ? "bg-secondary text-white shadow-xl scale-105"
-                                                            : "bg-white border border-black/5 text-secondary hover:border-primary/30"
+                                                        ? "bg-secondary text-white shadow-xl scale-105"
+                                                        : "bg-white border border-black/5 text-secondary hover:border-primary/30"
                                                         }`}
                                                 >
                                                     {time}

@@ -28,6 +28,16 @@ export default function AppointmentManager() {
     const [filter, setFilter] = useState<string>("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedAppId, setSelectedAppId] = useState<Id<"appointments"> | null>(null);
+    const [copying, setCopying] = useState(false);
+
+    const copyIcalLink = () => {
+        const siteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL || "";
+        const icalUrl = `${siteUrl}/ical?token=braidbytina-calendar-secret-2025`;
+        navigator.clipboard.writeText(icalUrl);
+        setCopying(true);
+        setTimeout(() => setCopying(false), 2000);
+    };
+
 
     const filteredAppointments = appointments
         .filter(app => {
@@ -65,17 +75,29 @@ export default function AppointmentManager() {
                     </h1>
                 </div>
 
-                <div className="flex bg-white/5 p-1 rounded-xl md:rounded-2xl border border-white/5 overflow-x-auto scrollbar-hide">
-                    {["all", "pending", "confirmed", "completed", "cancelled"].map((f) => (
-                        <button
-                            key={f}
-                            onClick={() => setFilter(f)}
-                            className={`px-3 md:px-4 py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${filter === f ? "bg-primary text-white shadow-lg" : "text-gray-500 hover:text-white"
-                                }`}
-                        >
-                            {f}
-                        </button>
-                    ))}
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={copyIcalLink}
+                        className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center gap-2 border ${copying
+                            ? "bg-green-500 border-green-500 text-white"
+                            : "bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10"
+                            }`}
+                    >
+                        <CalendarIcon size={16} />
+                        {copying ? "Link Copied!" : "Sync to Calendar"}
+                    </button>
+                    <div className="flex bg-white/5 p-1 rounded-xl md:rounded-2xl border border-white/5 overflow-x-auto scrollbar-hide">
+                        {["all", "pending", "confirmed", "completed", "cancelled"].map((f) => (
+                            <button
+                                key={f}
+                                onClick={() => setFilter(f)}
+                                className={`px-3 md:px-4 py-2 rounded-lg md:rounded-xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${filter === f ? "bg-primary text-white shadow-lg" : "text-gray-500 hover:text-white"
+                                    }`}
+                            >
+                                {f}
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </header>
 

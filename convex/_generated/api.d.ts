@@ -12,6 +12,7 @@ import type * as admin from "../admin.js";
 import type * as appointments from "../appointments.js";
 import type * as content from "../content.js";
 import type * as gallery from "../gallery.js";
+import type * as http from "../http.js";
 import type * as products from "../products.js";
 import type * as seed from "../seed.js";
 import type * as seedGallery from "../seedGallery.js";
@@ -28,6 +29,7 @@ declare const fullApi: ApiFromModules<{
   appointments: typeof appointments;
   content: typeof content;
   gallery: typeof gallery;
+  http: typeof http;
   products: typeof products;
   seed: typeof seed;
   seedGallery: typeof seedGallery;
