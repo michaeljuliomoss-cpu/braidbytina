@@ -60,4 +60,13 @@ export default defineSchema({
         date: v.string(),
         reason: v.optional(v.string()),
     }).index("by_date", ["date"]),
+
+    availability: defineTable({
+        date: v.string(),        // "YYYY-MM-DD"
+        slots: v.array(v.string()), // ["09:00 AM", ...]
+    }).index("by_date", ["date"]),
+
+    defaultSlots: defineTable({
+        slots: v.array(v.string()), // ["09:00 AM", ...]
+    }),
 });

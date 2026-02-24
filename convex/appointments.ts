@@ -15,6 +15,20 @@ export const createAppointment = mutation({
         notes: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        // Double booking prevention
+        const existing = await ctx.db
+            .query("appointments")
+            .withIndex("by_date", (q) => q.eq("date", args.date))
+            .filter((q) => q.and(
+                q.eq(q.field("timeSlot"), args.timeSlot),
+                q.neq(q.field("status"), "cancelled")
+            ))
+            .first();
+
+        if (existing) {
+            throw new Error("This time slot is already booked.");
+        }
+
         const appointmentId = await ctx.db.insert("appointments", {
             ...args,
             status: "confirmed",

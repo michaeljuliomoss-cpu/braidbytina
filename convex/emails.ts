@@ -14,7 +14,7 @@ export const sendBookingEmail = action({
     },
     handler: async (ctx, args) => {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
-        const TINA_EMAIL = process.env.TINA_EMAIL || "michaelMoss@gmail.com"; // Fallback for now
+        const TINA_EMAIL = process.env.TINA_EMAIL || "michaeljuliomoss@gmail.com"; // Updated as per previous request
 
         if (!RESEND_API_KEY) {
             console.error("RESEND_API_KEY not found in environment variables");

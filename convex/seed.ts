@@ -90,5 +90,12 @@ export const initialize = mutation({
                 await ctx.db.insert("products", product);
             }
         }
+
+        const defaultSlotsCount = await ctx.db.query("defaultSlots").collect();
+        if (defaultSlotsCount.length === 0) {
+            await ctx.db.insert("defaultSlots", {
+                slots: ["09:00 AM", "10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"]
+            });
+        }
     },
 });

@@ -146,6 +146,16 @@ export default function AdminDashboard() {
                                 </div>
                             </Link>
 
+                            <Link href="/admin/availability" className="flex items-center gap-4 p-5 bg-white/5 hover:bg-white/10 rounded-3xl group transition-all border border-white/5">
+                                <div className="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500 border border-amber-500/10">
+                                    <Clock className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p className="font-bold text-white">Manage Availability</p>
+                                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Time Slots</p>
+                                </div>
+                            </Link>
+
                             <Link href="/admin/content" className="flex items-center gap-4 p-5 bg-white/5 hover:bg-white/10 rounded-3xl group transition-all border border-white/5">
                                 <div className="w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center text-white border border-white/10">
                                     <FileText className="w-6 h-6" />

@@ -40,8 +40,13 @@ export default function BookingFlow() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Hardcoded time slots for now - typically braiders have set start times
-    const timeSlots = ["09:00 AM", "10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"];
+    // Dynamic time slots from Convex
+    const dynamicTimeSlots = useQuery(
+        api.availability.getAvailability,
+        selectedDate ? { date: format(selectedDate, "yyyy-MM-dd") } : "skip"
+    );
+
+    const timeSlots = dynamicTimeSlots || ["09:00 AM", "10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"];
 
     // Fetch appointments for the selected date to hide taken slots
     const dayAppointments = useQuery(
@@ -97,9 +102,12 @@ export default function BookingFlow() {
                 notes: customerInfo.notes
             });
             setCurrentStep("success");
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            alert("Booking failed. Please try again.");
+            const errorMessage = error.message?.includes("already booked")
+                ? "This time slot was just taken! Please pick another."
+                : "Booking failed. Please try again.";
+            alert(errorMessage);
         } finally {
             setIsSubmitting(false);
         }
