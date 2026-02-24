@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { api } from "../../../../convex/_generated/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { format, startOfDay } from "date-fns";
 import { DayPicker } from "react-day-picker";
@@ -26,10 +26,10 @@ export default function AvailabilityPage() {
 
     const dateStr = selectedDate ? format(selectedDate, "yyyy-MM-dd") : "";
 
-    const customSlots = useQuery(api.availability.getAvailability, selectedDate ? { date: dateStr } : "skip");
-    const defaultSlots = useQuery(api.availability.getDefaultSlots);
-    const updateAvailability = useMutation(api.availability.updateAvailability);
-    const updateDefaultSlots = useMutation(api.availability.updateDefaultSlots);
+    const customSlots = useQuery((api as any).availability.getAvailability, selectedDate ? { date: dateStr } : "skip");
+    const defaultSlots = useQuery((api as any).availability.getDefaultSlots);
+    const updateAvailability = useMutation((api as any).availability.updateAvailability);
+    const updateDefaultSlots = useMutation((api as any).availability.updateDefaultSlots);
 
     const [editingSlots, setEditingSlots] = useState<string[] | null>(null);
     const [editingDefaults, setEditingDefaults] = useState(false);
@@ -49,7 +49,7 @@ export default function AvailabilityPage() {
     };
 
     const handleRemoveSlot = (slot: string) => {
-        setEditingSlots(currentSlots.filter(s => s !== slot));
+        setEditingSlots(currentSlots.filter((s: string) => s !== slot));
     };
 
     const handleSave = async () => {
@@ -96,8 +96,8 @@ export default function AvailabilityPage() {
                         setEditingSlots(null);
                     }}
                     className={`px-6 py-3 rounded-2xl font-black transition-all border flex items-center gap-2 ${editingDefaults
-                            ? "bg-amber-500 text-black border-amber-500 shadow-lg shadow-amber-500/20"
-                            : "bg-white/5 text-gray-400 border-white/10 hover:bg-white/10"
+                        ? "bg-amber-500 text-black border-amber-500 shadow-lg shadow-amber-500/20"
+                        : "bg-white/5 text-gray-400 border-white/10 hover:bg-white/10"
                         }`}
                 >
                     <Sparkles size={18} />
@@ -165,7 +165,7 @@ export default function AvailabilityPage() {
 
                     <div className="flex-1 space-y-6">
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                            {currentSlots.map((slot) => (
+                            {currentSlots.map((slot: string) => (
                                 <div
                                     key={slot}
                                     className="group relative bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:border-amber-500/30 transition-all"

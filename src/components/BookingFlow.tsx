@@ -42,7 +42,7 @@ export default function BookingFlow() {
 
     // Dynamic time slots from Convex
     const dynamicTimeSlots = useQuery(
-        api.availability.getAvailability,
+        (api as any).availability.getAvailability,
         selectedDate ? { date: format(selectedDate, "yyyy-MM-dd") } : "skip"
     );
 
@@ -55,7 +55,7 @@ export default function BookingFlow() {
     );
 
     const takenSlots = dayAppointments?.map(app => app.timeSlot) || [];
-    const availableSlots = timeSlots.filter(slot => {
+    const availableSlots = timeSlots.filter((slot: string) => {
         // First check if slot is already booked
         if (takenSlots.includes(slot)) return false;
 
@@ -231,7 +231,7 @@ export default function BookingFlow() {
                                         <p className="text-red-400 font-bold italic py-8 text-center text-sm">This day is fully booked!</p>
                                     ) : (
                                         <div className="grid grid-cols-2 gap-3">
-                                            {availableSlots.map((time) => (
+                                            {availableSlots.map((time: string) => (
                                                 <button
                                                     key={time}
                                                     onClick={() => setSelectedTime(time)}
