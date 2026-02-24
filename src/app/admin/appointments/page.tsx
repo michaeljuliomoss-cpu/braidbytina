@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { motion, AnimatePresence } from "framer-motion";
@@ -294,9 +295,9 @@ export default function AppointmentManager() {
                             <p className="text-sm text-gray-400 font-medium mb-6">
                                 Need a day off? Block specific dates here to prevent new bookings.
                             </p>
-                            <button className="w-full bg-white text-black font-black py-4 rounded-xl hover:bg-primary hover:text-white transition-all">
+                            <Link href="/admin/availability" className="w-full inline-block text-center bg-white text-black font-black py-4 rounded-xl hover:bg-primary hover:text-white transition-all">
                                 Manage Availability
-                            </button>
+                            </Link>
                         </div>
                         <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />
                     </div>
