@@ -55,21 +55,34 @@ export default function BookingFlow() {
     );
 
     const takenSlots = dayAppointments?.map(app => app.timeSlot) || [];
-    const availableSlots = timeSlots.filter((slot: string) => {
+    const availableSlots = (timeSlots || []).filter((slot: string) => {
+        if (!slot || typeof slot !== "string") return false;
+
         // First check if slot is already booked
         if (takenSlots.includes(slot)) return false;
 
         // Then check if it's today and the time has already passed
         if (selectedDate && isSameDay(selectedDate, new Date())) {
-            const [time, ampm] = slot.split(" ");
-            let [hours, minutes] = time.split(":").map(Number);
-            if (ampm === "PM" && hours !== 12) hours += 12;
-            if (ampm === "AM" && hours === 12) hours = 0;
+            try {
+                const parts = slot.split(" ");
+                if (parts.length < 2) return true;
 
-            const slotTime = new Date();
-            slotTime.setHours(hours, minutes, 0, 0);
+                const [time, ampm] = parts;
+                const timeParts = time.split(":");
+                if (timeParts.length < 2) return true;
 
-            return slotTime > new Date();
+                let [hours, minutes] = timeParts.map(Number);
+                if (ampm === "PM" && hours !== 12) hours += 12;
+                if (ampm === "AM" && hours === 12) hours = 0;
+
+                const slotTime = new Date();
+                slotTime.setHours(hours, minutes, 0, 0);
+
+                return slotTime > new Date();
+            } catch (e) {
+                console.error("Error parsing slot:", slot, e);
+                return true;
+            }
         }
 
         return true;
@@ -210,13 +223,17 @@ export default function BookingFlow() {
                                     .rdp-button:hover:not([disabled]):not(.rdp-day_selected) { background-color: rgba(242, 138, 178, 0.1); color: #f28ab2; border-radius: 1rem; }
                                     .rdp-head_cell { font-weight: 900; color: #aaa; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em; }
                                     .rdp-caption_label { font-weight: 900; font-size: 1.25rem; color: #1a1a1a; }
+                                    .rdp-month { width: 100%; }
+                                    .rdp-table { width: 100%; max-width: 100%; }
+                                    .rdp-cell { text-align: center; }
+                                    .rdp-day { width: 100%; max-width: 44px; height: 44px; margin: 0 auto; }
                                 `}</style>
                                 <DayPicker
                                     mode="single"
                                     selected={selectedDate}
                                     onSelect={handleDateSelect}
                                     disabled={disabledDays}
-                                    className="mx-auto"
+                                    className="mx-auto w-full flex justify-center"
                                 />
                             </div>
 
