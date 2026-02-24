@@ -31,7 +31,8 @@ export default function AppointmentManager() {
     const [copying, setCopying] = useState(false);
 
     const copyIcalLink = () => {
-        const siteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL || "";
+        const siteUrl = process.env.NEXT_PUBLIC_CONVEX_SITE_URL ||
+            (process.env.NEXT_PUBLIC_CONVEX_URL ? process.env.NEXT_PUBLIC_CONVEX_URL.replace('.cloud', '.site') : "");
         const icalUrl = `${siteUrl}/ical?token=braidbytina-calendar-secret-2026`;
         navigator.clipboard.writeText(icalUrl);
         setCopying(true);
