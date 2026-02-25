@@ -1,6 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 
 export const createAppointment = mutation({
     args: {
@@ -55,6 +55,61 @@ export const createAppointment = mutation({
             totalPrice: args.totalPrice,
         });
 
+        const service = await ctx.db.get(args.serviceId);
+
+        // Trigger Google Calendar Push
+        await ctx.scheduler.runAfter(0, internal.calendarApi.createEvent, {
+            appointmentId,
+            customerName: args.customerName,
+            customerEmail: args.customerEmail,
+            customerPhone: args.customerPhone,
+            serviceName: args.serviceName,
+            date: args.date,
+            timeSlot: args.timeSlot,
+            duration: service?.duration,
+            notes: args.notes,
+        });
+
+        // Trigger Customer Confirmation Email
+        await ctx.scheduler.runAfter(0, api.emails.sendCustomerConfirmation, {
+            customerName: args.customerName,
+            customerEmail: args.customerEmail,
+            serviceName: args.serviceName,
+            date: args.date,
+            timeSlot: args.timeSlot,
+            duration: service?.duration,
+        });
+
+        // Schedule the 1-hour reminder for the customer
+        // Calculate timestamp for exactly 1 hour before the appointment
+        // We use EST logic here just like the ICS generator (assuming local New York time)
+        const [time, modifier] = args.timeSlot.split(' ');
+        let [hours, minutes] = time.split(':');
+        let h = parseInt(hours, 10);
+        if (h === 12) h = 0;
+        if (modifier.toLowerCase() === 'pm') h += 12;
+
+        // Parse date
+        const [year, month, day] = args.date.split('-');
+
+        // Build an explicit JS date assuming New York time (EDT/EST fallback)
+        const appointmentTime = new Date(`${args.date} ${args.timeSlot} EST`);
+        const oneHourMillis = 60 * 60 * 1000;
+        let scheduledTime = appointmentTime.getTime() - oneHourMillis;
+
+        // Prevent scheduling in the past
+        if (scheduledTime <= Date.now()) {
+            scheduledTime = Date.now() + 10000; // schedule in 10 seconds if it's already within an hour
+        }
+
+        // Use runAt to execute it at that precise absolute time
+        await ctx.scheduler.runAt(scheduledTime, api.emails.sendCustomerReminder, {
+            customerName: args.customerName,
+            customerEmail: args.customerEmail,
+            serviceName: args.serviceName,
+            timeSlot: args.timeSlot,
+        });
+
         return appointmentId;
     },
 });
@@ -90,6 +145,12 @@ export const updateAppointmentStatus = mutation({
     args: { id: v.id("appointments"), status: v.string() },
     handler: async (ctx, args) => {
         await ctx.db.patch(args.id, { status: args.status });
+
+        // Trigger Google Calendar update
+        await ctx.scheduler.runAfter(0, internal.calendarApi.updateEventStatus, {
+            appointmentId: args.id,
+            status: args.status,
+        });
     },
 });
 

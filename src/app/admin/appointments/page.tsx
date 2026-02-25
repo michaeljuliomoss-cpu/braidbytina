@@ -38,15 +38,6 @@ export default function AppointmentManager() {
         return rawUrl.replace(/^https?:\/\//, "webcal://");
     };
 
-    const syncToApple = () => {
-        window.location.href = getBaseUrl();
-    };
-
-    const syncToGoogle = () => {
-        window.open(`https://calendar.google.com/calendar/r?cid=${encodeURIComponent(getBaseUrl())}`, "_blank");
-    };
-
-
     const filteredAppointments = appointments
         .filter(app => {
             const matchesFilter = filter === "all" || app.status === filter;
@@ -84,22 +75,6 @@ export default function AppointmentManager() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <div className="flex gap-2">
-                        <button
-                            onClick={syncToGoogle}
-                            className={`px-4 md:px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center gap-2 border bg-blue-500/10 border-blue-500/20 text-blue-400 hover:text-white hover:bg-blue-500`}
-                        >
-                            <CalendarIcon size={16} />
-                            Sync Google
-                        </button>
-                        <button
-                            onClick={syncToApple}
-                            className={`px-4 md:px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-xs transition-all flex items-center gap-2 border bg-white/5 border-white/10 text-gray-400 hover:text-white hover:bg-white/10`}
-                        >
-                            <CalendarIcon size={16} />
-                            Sync Apple
-                        </button>
-                    </div>
                     <div className="flex bg-white/5 p-1 rounded-xl md:rounded-2xl border border-white/5 overflow-x-auto scrollbar-hide">
                         {["all", "pending", "confirmed", "completed", "cancelled"].map((f) => (
                             <button

@@ -11,6 +11,7 @@
 import type * as admin from "../admin.js";
 import type * as appointments from "../appointments.js";
 import type * as availability from "../availability.js";
+import type * as calendarApi from "../calendarApi.js";
 import type * as content from "../content.js";
 import type * as emails from "../emails.js";
 import type * as gallery from "../gallery.js";
@@ -31,6 +32,7 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   appointments: typeof appointments;
   availability: typeof availability;
+  calendarApi: typeof calendarApi;
   content: typeof content;
   emails: typeof emails;
   gallery: typeof gallery;

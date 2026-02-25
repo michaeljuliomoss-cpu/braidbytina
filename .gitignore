@@ -42,3 +42,10 @@ next-env.d.ts
 
 .vercel
 .env*.local
+
+braidbytina-*.json
+temp-key.txt
+temp-dev.envs
+test-google-push.js
+
+.env.local
