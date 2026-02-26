@@ -221,3 +221,58 @@ export const sendCustomerReminder = action({
         }
     }
 });
+
+export const sendCustomerRequestReceived = action({
+    args: {
+        customerName: v.string(),
+        customerEmail: v.string(),
+        serviceName: v.string(),
+        date: v.string(),
+        timeSlot: v.string(),
+        depositInstructions: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const RESEND_API_KEY = process.env.RESEND_API_KEY;
+        if (!RESEND_API_KEY) return;
+
+        const depositText = args.depositInstructions
+            ? `<div style="background: #fdf2f8; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                 <h3 style="margin-top: 0; color: #f28ab2;">Deposit Instructions</h3>
+                 <p style="white-space: pre-wrap; margin-bottom: 0;">${args.depositInstructions}</p>
+               </div>`
+            : `<p>A deposit is required to secure your appointment. Tina will reach out to you shortly with deposit instructions.</p>`;
+
+        const response = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${RESEND_API_KEY}`,
+            },
+            body: JSON.stringify({
+                from: "BraidByTina <onboarding@resend.dev>",
+                to: [args.customerEmail],
+                subject: `Booking Request Received - Deposit Required 💇‍♀️`,
+                html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 20px; background-color: #fffafb;">
+            <h2 style="color: #f28ab2; text-align: center; font-size: 24px;">Request Received! ✨</h2>
+            <div style="background-color: white; padding: 20px; border-radius: 15px; border: 1px solid #f28ab222; text-align: center;">
+              <p style="font-size: 16px;">Hi ${args.customerName},</p>
+              <p style="font-size: 16px;">Your appointment request for <strong>${args.serviceName}</strong> on <strong>${args.date}</strong> at <strong>${args.timeSlot}</strong> has been received!</p>
+              
+              ${depositText}
+
+              <p style="font-size: 14px; color: #666; margin-top: 20px;">Once your deposit is confirmed, you will receive a final confirmation email with your calendar invite.</p>
+            </div>
+            <p style="text-align: center; font-size: 12px; color: #999; margin-top: 20px;">
+              See you soon at BraidsByTina!
+            </p>
+          </div>
+        `
+            }),
+        });
+
+        if (!response.ok) {
+            console.error("Resend API Error (Request Received):", await response.text());
+        }
+    }
+});

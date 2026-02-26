@@ -25,6 +25,7 @@ import { Id } from "../../../../convex/_generated/dataModel";
 export default function AppointmentManager() {
     const appointments = useQuery(api.appointments.getAllAppointments) || [];
     const updateStatus = useMutation(api.appointments.updateAppointmentStatus);
+    const confirmAppt = useMutation(api.appointments.confirmAppointment);
 
     const [filter, setFilter] = useState<string>("all");
     const [searchQuery, setSearchQuery] = useState("");
@@ -54,6 +55,15 @@ export default function AppointmentManager() {
         } catch (error) {
             console.error(error);
             alert("Failed to update status");
+        }
+    };
+
+    const handleConfirm = async (id: Id<"appointments">) => {
+        try {
+            await confirmAppt({ id });
+        } catch (error) {
+            console.error(error);
+            alert("Failed to confirm booking");
         }
     };
 
@@ -198,7 +208,7 @@ export default function AppointmentManager() {
                                                         <div className="flex flex-col xs:flex-row gap-3">
                                                             {app.status === "pending" && (
                                                                 <button
-                                                                    onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "confirmed"); }}
+                                                                    onClick={(e) => { e.stopPropagation(); handleConfirm(app._id); }}
                                                                     className="flex-1 bg-green-500 text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
                                                                 >
                                                                     <CheckCircle2 size={16} /> Confirm

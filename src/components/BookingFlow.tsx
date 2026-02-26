@@ -377,13 +377,13 @@ export default function BookingFlow() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="max-w-xl mx-auto text-center space-y-8 py-12"
                     >
-                        <div className="w-24 h-24 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-green-500/30">
-                            <CheckCircle2 size={48} />
+                        <div className="w-24 h-24 bg-yellow-500 text-white rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-yellow-500/30">
+                            <Clock size={48} />
                         </div>
                         <div className="space-y-4">
-                            <h2 className="text-5xl font-black text-secondary tracking-tighter">Appointment Requested!</h2>
+                            <h2 className="text-5xl font-black text-secondary tracking-tighter">Request Received!</h2>
                             <p className="text-gray-500 font-bold text-lg leading-relaxed">
-                                Thank you, {customerInfo.name.split(" ")[0]}! Your request for <span className="text-primary">{selectedService?.name}</span> has been received. Tina will review and confirm your slot shortly.
+                                Thank you, {customerInfo.name.split(" ")[0]}! Your request for <span className="text-primary">{selectedService?.name}</span> has been received. <strong>Please check your email for deposit instructions.</strong> Tina will review and confirm your slot once the deposit is verified.
                             </p>
                         </div>
                         <div className="bg-stone-50 p-8 rounded-[3rem] border border-black/5 space-y-4">

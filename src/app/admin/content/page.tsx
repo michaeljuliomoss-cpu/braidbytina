@@ -30,6 +30,7 @@ export default function ContentManager() {
     const [heroSubtitle, setHeroSubtitle] = useState("");
     const [hours, setHours] = useState("");
     const [depositPolicy, setDepositPolicy] = useState("");
+    const [depositInstructions, setDepositInstructions] = useState("");
     const [bio, setBio] = useState("");
     const [logoUrl, setLogoUrl] = useState("");
     const [aboutImageUrl, setAboutImageUrl] = useState("");
@@ -48,6 +49,7 @@ export default function ContentManager() {
             setHeroSubtitle(content.heroSubtitle || "");
             setHours(content.hours || "");
             setDepositPolicy(content.depositPolicy || "");
+            setDepositInstructions(content["deposit-instructions"] || "");
             setBio(content.bio || "");
             setLogoUrl(content.logoUrl || "");
             setAboutImageUrl(content.aboutImageUrl || "");
@@ -113,6 +115,7 @@ export default function ContentManager() {
                 { key: "heroSubtitle", value: heroSubtitle },
                 { key: "hours", value: hours },
                 { key: "depositPolicy", value: depositPolicy },
+                { key: "deposit-instructions", value: depositInstructions },
                 { key: "bio", value: bio },
                 { key: "logoUrl", value: logoUrl },
                 { key: "aboutImageUrl", value: aboutImageUrl },
@@ -380,6 +383,18 @@ export default function ContentManager() {
                                     />
                                 </ContentSection>
                             </div>
+                            <ContentSection
+                                icon={ShieldAlert}
+                                title="Deposit Instructions"
+                                description="Bank/Zelle/CashApp instructions sent to the customer upon requesting a booking."
+                            >
+                                <textarea
+                                    value={depositInstructions}
+                                    onChange={(e) => setDepositInstructions(e.target.value)}
+                                    className="w-full h-32 bg-white/5 border border-white/10 rounded-3xl p-6 text-white placeholder:text-white/20 focus:outline-none focus:border-primary transition-all font-medium resize-none leading-relaxed"
+                                    placeholder="Enter Bank Details, Zelle, CashApp etc."
+                                />
+                            </ContentSection>
                         </motion.div>
                     )}
                 </AnimatePresence>

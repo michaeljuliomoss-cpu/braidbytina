@@ -31,8 +31,14 @@ export const createAppointment = mutation({
 
         const appointmentId = await ctx.db.insert("appointments", {
             ...args,
-            status: "confirmed",
+            status: "pending",
         });
+
+        const depositContent = await ctx.db
+            .query("siteContent")
+            .withIndex("by_key", (q) => q.eq("key", "deposit-instructions"))
+            .first();
+        const depositInstructions = depositContent?.value;
 
         // Trigger email notification to Tina
         await ctx.scheduler.runAfter(0, api.emails.sendBookingEmail, {
@@ -55,63 +61,75 @@ export const createAppointment = mutation({
             totalPrice: args.totalPrice,
         });
 
-        const service = await ctx.db.get(args.serviceId);
+        // Send Request Received Email with Deposit Instructions
+        await ctx.scheduler.runAfter(0, api.emails.sendCustomerRequestReceived, {
+            customerName: args.customerName,
+            customerEmail: args.customerEmail,
+            serviceName: args.serviceName,
+            date: args.date,
+            timeSlot: args.timeSlot,
+            depositInstructions: depositInstructions,
+        });
+
+        return appointmentId;
+    },
+});
+
+export const confirmAppointment = mutation({
+    args: { id: v.id("appointments") },
+    handler: async (ctx, args) => {
+        const appointment = await ctx.db.get(args.id);
+        if (!appointment) throw new Error("Appointment not found");
+
+        await ctx.db.patch(args.id, { status: "confirmed" });
+
+        const service = await ctx.db.get(appointment.serviceId);
 
         // Trigger Google Calendar Push
         await ctx.scheduler.runAfter(0, internal.calendarApi.createEvent, {
-            appointmentId,
-            customerName: args.customerName,
-            customerEmail: args.customerEmail,
-            customerPhone: args.customerPhone,
-            serviceName: args.serviceName,
-            date: args.date,
-            timeSlot: args.timeSlot,
+            appointmentId: args.id,
+            customerName: appointment.customerName,
+            customerEmail: appointment.customerEmail,
+            customerPhone: appointment.customerPhone,
+            serviceName: appointment.serviceName,
+            date: appointment.date,
+            timeSlot: appointment.timeSlot,
             duration: service?.duration,
-            notes: args.notes,
+            notes: appointment.notes,
         });
 
-        // Trigger Customer Confirmation Email
+        // Trigger Customer Confirmation Email with Calendar Links
         await ctx.scheduler.runAfter(0, api.emails.sendCustomerConfirmation, {
-            customerName: args.customerName,
-            customerEmail: args.customerEmail,
-            serviceName: args.serviceName,
-            date: args.date,
-            timeSlot: args.timeSlot,
+            customerName: appointment.customerName,
+            customerEmail: appointment.customerEmail,
+            serviceName: appointment.serviceName,
+            date: appointment.date,
+            timeSlot: appointment.timeSlot,
             duration: service?.duration,
         });
 
         // Schedule the 1-hour reminder for the customer
-        // Calculate timestamp for exactly 1 hour before the appointment
-        // We use EST logic here just like the ICS generator (assuming local New York time)
-        const [time, modifier] = args.timeSlot.split(' ');
+        const [time, modifier] = appointment.timeSlot.split(' ');
         let [hours, minutes] = time.split(':');
         let h = parseInt(hours, 10);
         if (h === 12) h = 0;
         if (modifier.toLowerCase() === 'pm') h += 12;
 
-        // Parse date
-        const [year, month, day] = args.date.split('-');
-
-        // Build an explicit JS date assuming New York time (EDT/EST fallback)
-        const appointmentTime = new Date(`${args.date} ${args.timeSlot} EST`);
+        const appointmentTime = new Date(`${appointment.date} ${appointment.timeSlot} EST`);
         const oneHourMillis = 60 * 60 * 1000;
         let scheduledTime = appointmentTime.getTime() - oneHourMillis;
 
-        // Prevent scheduling in the past
         if (scheduledTime <= Date.now()) {
-            scheduledTime = Date.now() + 10000; // schedule in 10 seconds if it's already within an hour
+            scheduledTime = Date.now() + 10000;
         }
 
-        // Use runAt to execute it at that precise absolute time
         await ctx.scheduler.runAt(scheduledTime, api.emails.sendCustomerReminder, {
-            customerName: args.customerName,
-            customerEmail: args.customerEmail,
-            serviceName: args.serviceName,
-            timeSlot: args.timeSlot,
+            customerName: appointment.customerName,
+            customerEmail: appointment.customerEmail,
+            serviceName: appointment.serviceName,
+            timeSlot: appointment.timeSlot,
         });
-
-        return appointmentId;
-    },
+    }
 });
 
 export const getAppointmentsByDate = query({
