@@ -1,9 +1,11 @@
 ---
-description: How to set up and integrate automated Google Calendar event creation using a GCP Service Account in a Convex/Next.js stack.
+description: How to set up and integrate automated Google Calendar event creation, deletion, and a two-step booking confirmation flow using a GCP Service Account in a Convex/Next.js stack.
 ---
 # Google Calendar Service Account Integration
 
-This skill documents how to allow a web application to automatically create, cancel, and update calendar events directly onto a user's Google Calendar, completely in the background without requiring the user to endure an OAuth flow.
+This skill documents how to allow a web application to automatically create, update, and delete calendar events directly onto a user's Google Calendar, completely in the background without requiring the user to endure an OAuth flow. It also documents the two-step booking confirmation workflow with deposit handling.
+
+---
 
 ## 1. Google Cloud Platform (GCP) Setup
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
@@ -26,14 +28,23 @@ Before the bot can insert events into *any* calendar, the owner of that calendar
 3. Scroll down to **Share with specific people or groups**.
 4. Click **Add people and groups** and paste the exact `client_email` (the Service Account email).
 5. Ensure the permission is set to: **"Make changes to events"**.
-6. If the event should go to a secondary calendar, scroll to "Integrate calendar" and copy the **Calendar ID** (which looks like a long string of characters). If it's a primary calendar, the Calendar ID is just the user's email address.
+6. If the event should go to a secondary calendar, scroll to "Integrate calendar" and copy the **Calendar ID**. If it's a primary calendar, the Calendar ID is just the user's email address.
 
 ## 4. Convex Backend Implementation (`googleapis`)
-1. Install the official package: `npm install googleapis` inside the `convex/` folder.
-2. In your Convex action file (e.g., `convex/calendarApi.ts`), initialize the client:
 
+### Installation
+Install the official package inside the `convex/` folder:
+```bash
+npm install googleapis
+```
+
+### Calendar Client Setup (`convex/calendarApi.ts`)
 ```typescript
+"use node";
 import { google } from 'googleapis';
+
+const CALENDAR_IDS = ["owner@gmail.com", "admin@gmail.com"]; // Push to multiple calendars
+const TIMEZONE = "America/New_York";
 
 function getCalendarClient() {
     const clientEmail = process.env.GOOGLE_CALENDAR_CLIENT_EMAIL!;
@@ -41,7 +52,7 @@ function getCalendarClient() {
 
     const auth = new google.auth.JWT({
         email: clientEmail,
-        key: privateKey.replace(/\\n/g, '\n'), // Crucial to handle escaped newlines
+        key: privateKey.replace(/\\n/g, '\n'), // Handle escaped newlines
         scopes: ['https://www.googleapis.com/auth/calendar.events']
     });
 
@@ -49,47 +60,107 @@ function getCalendarClient() {
 }
 ```
 
-3. Create action handlers to insert, update, or delete:
+### Creating Events
 ```typescript
-import { action } from "./_generated/server";
-import { v } from "convex/values";
-
-// Multi-calendar support array
-const CALENDAR_IDS = ["client@gmail.com", "admin@gmail.com"];
-
-export const createEvent = action({
-    args: { 
-        appointmentId: v.string(), 
-        customerName: v.string(), 
-        startTime: v.string(), // ISO String
-        endTime: v.string()    // ISO String
+export const createEvent = internalAction({
+    args: {
+        appointmentId: v.id("appointments"),
+        customerName: v.string(),
+        serviceName: v.string(),
+        date: v.string(),         // "2026-02-25"
+        timeSlot: v.string(),     // "09:30 AM"
+        duration: v.optional(v.string()),
+        // ...other fields
     },
     handler: async (ctx, args) => {
         const calendar = getCalendarClient();
-        
+        const startDate = parseDateString(args.date, args.timeSlot);
+        const endDate = new Date(startDate.getTime() + durationMins * 60000);
+
         const event = {
-            summary: `Booking for ${args.customerName}`,
-            description: `Automated booking reference: ${args.appointmentId}`,
-            start: { dateTime: args.startTime, timeZone: 'America/New_York' },
-            end: { dateTime: args.endTime, timeZone: 'America/New_York' },
+            summary: `${args.serviceName} - ${args.customerName}`,
+            start: { dateTime: toLocalIsoString(startDate), timeZone: TIMEZONE },
+            end: { dateTime: toLocalIsoString(endDate), timeZone: TIMEZONE },
             extendedProperties: {
                 private: { convexAppointmentId: args.appointmentId }
             }
         };
 
-        // Push to multiple calendars simultaneously
+        // Push to all configured calendars
         await Promise.all(CALENDAR_IDS.map(async (calendarId) => {
-            try {
-                await calendar.events.insert({
-                    calendarId: calendarId,
-                    requestBody: event,
-                });
-            } catch (err) {
-                console.error(`Failed to push to calendar ${calendarId}:`, err);
+            await calendar.events.insert({ calendarId, requestBody: event });
+        }));
+    }
+});
+```
+
+### Deleting Events
+Uses `extendedProperties` to find events by Convex appointment ID, then deletes them from all calendars:
+```typescript
+export const deleteEvent = internalAction({
+    args: { appointmentId: v.id("appointments") },
+    handler: async (ctx, args) => {
+        const calendar = getCalendarClient();
+        await Promise.all(CALENDAR_IDS.map(async (calendarId) => {
+            const searchResponse = await calendar.events.list({
+                calendarId,
+                privateExtendedProperty: [`convexAppointmentId=${args.appointmentId}`]
+            });
+
+            if (searchResponse.data.items?.length) {
+                const eventId = searchResponse.data.items[0].id!;
+                await calendar.events.delete({ calendarId, eventId });
             }
         }));
     }
 });
 ```
 
-Using `extendedProperties.private.convexAppointmentId` is a best-practice for safely linking and locating Google Calendar events later if you need to cancel or update them on the backend.
+### Key Pattern: `extendedProperties`
+Using `extendedProperties.private.convexAppointmentId` is the best-practice for safely linking and locating Google Calendar events later. This allows you to find/update/delete events by your internal appointment ID without storing the Google event ID.
+
+---
+
+## 5. Two-Step Booking Confirmation Workflow
+
+### Flow Overview
+1. **Customer books** → Appointment created with status `"pending"` → Customer gets "Deposit Required" email with bank details.
+2. **Admin confirms** (after receiving deposit) → Status changes to `"confirmed"` → Google Calendar event created → Customer gets confirmation email with calendar links (.ics + Google Calendar URL).
+3. **Admin completes or cancels** → Google Calendar event is **deleted** from the calendar.
+
+### Key Files
+| File | Role |
+|---|---|
+| `convex/appointments.ts` | `createAppointment` (pending), `confirmAppointment` (confirmed + GCal + email), `updateAppointmentStatus` (complete/cancel + delete GCal) |
+| `convex/calendarApi.ts` | `createEvent`, `updateEventStatus`, `deleteEvent` |
+| `convex/emails.ts` | `sendCustomerRequestReceived` (deposit email), `sendCustomerConfirmation` (final email + .ics), `sendCustomerReminder` (1-hr before) |
+| `src/app/admin/content/page.tsx` | Admin inputs deposit instructions (banked to `siteContent` table under key `deposit-instructions`) |
+| `src/app/admin/appointments/page.tsx` | Admin UI with Confirm / Complete / Cancel buttons |
+| `src/components/BookingFlow.tsx` | Customer-facing success screen shows "pending" status |
+
+### Deposit Instructions
+Stored in the `siteContent` Convex table under the key `deposit-instructions`. The admin edits this via the Content Dashboard. This value is retrieved by `createAppointment` and passed to the `sendCustomerRequestReceived` email action.
+
+### Customer Email Calendar Links
+The confirmation email includes:
+- **Google Calendar link**: A URL with query params that pre-fills a new Google Calendar event.
+- **.ics file attachment**: A standard calendar format file. When opened on Apple devices it prompts the user to add the event to their existing calendar (it does NOT create a new calendar).
+
+---
+
+## 6. Schema Requirements
+The `appointments` table should have a `status` field that supports these values:
+- `"pending"` — Waiting for deposit / admin review
+- `"confirmed"` — Deposit verified, event on Google Calendar
+- `"completed"` — Service finished, event deleted from calendar
+- `"cancelled"` — Cancelled, event deleted from calendar
+
+The `siteContent` table should have a record with `key: "deposit-instructions"` for storing the bank/payment details.
+
+---
+
+## 7. Troubleshooting
+- **"insufficient permissions"**: The Service Account email hasn't been shared on the target calendar, or the permission isn't "Make changes to events".
+- **Escaped newlines**: The `private_key` from the JSON file contains `\n` literal strings. Your code must do `.replace(/\\n/g, '\n')` to convert them to real newlines.
+- **Events not appearing**: Check that `CALENDAR_IDS` contains the correct email or Calendar ID, and that the timezone matches expectations.
+- **Double bookings**: The `createAppointment` mutation checks for existing non-cancelled appointments on the same date/timeslot before inserting.

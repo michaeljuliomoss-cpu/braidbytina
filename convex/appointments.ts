@@ -164,11 +164,18 @@ export const updateAppointmentStatus = mutation({
     handler: async (ctx, args) => {
         await ctx.db.patch(args.id, { status: args.status });
 
-        // Trigger Google Calendar update
-        await ctx.scheduler.runAfter(0, internal.calendarApi.updateEventStatus, {
-            appointmentId: args.id,
-            status: args.status,
-        });
+        // Delete the Google Calendar event when completed or cancelled
+        if (args.status === "completed" || args.status === "cancelled") {
+            await ctx.scheduler.runAfter(0, internal.calendarApi.deleteEvent, {
+                appointmentId: args.id,
+            });
+        } else {
+            // For other status changes, update the event title
+            await ctx.scheduler.runAfter(0, internal.calendarApi.updateEventStatus, {
+                appointmentId: args.id,
+                status: args.status,
+            });
+        }
     },
 });
 
