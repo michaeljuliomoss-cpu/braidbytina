@@ -231,18 +231,10 @@ export const sendCustomerRequestReceived = action({
         serviceName: v.string(),
         date: v.string(),
         timeSlot: v.string(),
-        depositInstructions: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
         if (!RESEND_API_KEY) return;
-
-        const depositText = args.depositInstructions
-            ? `<div style="background: #fdf2f8; padding: 15px; border-radius: 10px; margin: 20px 0;">
-                 <h3 style="margin-top: 0; color: #f28ab2;">Deposit Instructions</h3>
-                 <p style="white-space: pre-wrap; margin-bottom: 0;">${args.depositInstructions}</p>
-               </div>`
-            : `<p>A deposit is required to secure your appointment. Tina will reach out to you shortly with deposit instructions.</p>`;
 
         const response = await fetch("https://api.resend.com/emails", {
             method: "POST",
@@ -261,7 +253,11 @@ export const sendCustomerRequestReceived = action({
               <p style="font-size: 16px;">Hi ${args.customerName},</p>
               <p style="font-size: 16px;">Your appointment request for <strong>${args.serviceName}</strong> on <strong>${args.date}</strong> at <strong>${args.timeSlot}</strong> has been received!</p>
               
-              ${depositText}
+              <div style="background: #fdf2f8; padding: 15px; border-radius: 10px; margin: 20px 0;">
+                <h3 style="margin-top: 0; color: #f28ab2;">💰 Deposit Required</h3>
+                <p style="margin-bottom: 8px;">A deposit is required to secure your appointment. Please visit our website for banking information and our deposit policy:</p>
+                <a href="https://braidbytina.vercel.app" style="display: inline-block; background: #f28ab2; color: white; padding: 10px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; margin-top: 5px;">View Deposit Info →</a>
+              </div>
 
               <p style="font-size: 14px; color: #666; margin-top: 20px;">Once your deposit is confirmed, you will receive a final confirmation email with your calendar invite.</p>
             </div>

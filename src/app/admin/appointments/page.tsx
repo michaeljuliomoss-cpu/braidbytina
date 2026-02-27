@@ -16,9 +16,10 @@ import {
     MoreHorizontal,
     Search,
     ChevronRight,
-    Filter
+    Filter,
+    Trash2
 } from "lucide-react";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, addDays, isBefore, startOfDay } from "date-fns";
 import { useState } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
 
@@ -26,6 +27,7 @@ export default function AppointmentManager() {
     const appointments = useQuery(api.appointments.getAllAppointments) || [];
     const updateStatus = useMutation(api.appointments.updateAppointmentStatus);
     const confirmAppt = useMutation(api.appointments.confirmAppointment);
+    const deleteAppt = useMutation(api.appointments.deleteAppointment);
 
     const [filter, setFilter] = useState<string>("all");
     const [searchQuery, setSearchQuery] = useState("");
@@ -47,7 +49,24 @@ export default function AppointmentManager() {
                 app.serviceName.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesFilter && matchesSearch;
         })
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        .sort((a, b) => a.date.localeCompare(b.date) || a.timeSlot.localeCompare(b.timeSlot));
+
+    const today = startOfDay(new Date());
+    const tomorrow = startOfDay(addDays(new Date(), 1));
+
+    const isToday = (dateStr: string) => isSameDay(new Date(dateStr + "T00:00:00"), today);
+    const isTomorrow = (dateStr: string) => isSameDay(new Date(dateStr + "T00:00:00"), tomorrow);
+    const isPast = (dateStr: string) => isBefore(new Date(dateStr + "T00:00:00"), today);
+
+    const handleDelete = async (id: Id<"appointments">) => {
+        if (!confirm("Are you sure you want to permanently delete this appointment?")) return;
+        try {
+            await deleteAppt({ id });
+        } catch (error) {
+            console.error(error);
+            alert("Failed to delete appointment");
+        }
+    };
 
     const handleStatusUpdate = async (id: Id<"appointments">, status: string) => {
         try {
@@ -131,118 +150,142 @@ export default function AppointmentManager() {
 
                     <div className="space-y-4">
                         <AnimatePresence mode="popLayout">
-                            {filteredAppointments.map((app) => (
-                                <motion.div
-                                    key={app._id}
-                                    layout
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    onClick={() => setSelectedAppId(app._id)}
-                                    className={`p-3 md:p-6 rounded-3xl border transition-all cursor-pointer group ${selectedAppId === app._id
-                                        ? "bg-primary/10 border-primary/30"
-                                        : "bg-white/5 border-white/5 hover:border-white/10"
-                                        }`}
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3 md:gap-6">
-                                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-secondary flex items-center justify-center border border-white/10 shrink-0">
-                                                <User className="w-6 h-6 md:w-8 md:h-8 text-white/20" />
-                                            </div>
-                                            <div>
-                                                <h3 className="text-lg md:text-xl font-black text-white mb-0.5 md:mb-1 leading-tight">{app.customerName}</h3>
-                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] md:text-sm font-bold text-gray-500">
-                                                    <span className="flex items-center gap-1.5"><CalendarIcon size={12} className="text-primary" /> {format(new Date(app.date), "MMM do")}</span>
-                                                    <span className="flex items-center gap-1.5"><Clock size={12} className="text-primary" /> {app.timeSlot}</span>
+                            {filteredAppointments.map((app) => {
+                                const todayHighlight = isToday(app.date);
+                                const tomorrowHighlight = isTomorrow(app.date);
+                                const pastDim = isPast(app.date) && app.status !== "pending";
+
+                                return (
+                                    <motion.div
+                                        key={app._id}
+                                        layout
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.95 }}
+                                        onClick={() => setSelectedAppId(app._id)}
+                                        className={`p-3 md:p-6 rounded-3xl border transition-all cursor-pointer group relative ${selectedAppId === app._id
+                                            ? "bg-primary/10 border-primary/30"
+                                            : pastDim
+                                                ? "bg-white/[0.02] border-white/[0.03] opacity-50"
+                                                : todayHighlight
+                                                    ? "bg-green-500/5 border-green-500/30 shadow-lg shadow-green-500/5"
+                                                    : tomorrowHighlight
+                                                        ? "bg-blue-500/5 border-blue-500/20"
+                                                        : "bg-white/5 border-white/5 hover:border-white/10"
+                                            }`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-3 md:gap-6">
+                                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-secondary flex items-center justify-center border border-white/10 shrink-0">
+                                                    <User className="w-6 h-6 md:w-8 md:h-8 text-white/20" />
                                                 </div>
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <h3 className="text-lg md:text-xl font-black text-white mb-0.5 md:mb-1 leading-tight">{app.customerName}</h3>
+                                                        {todayHighlight && <span className="text-[9px] font-black uppercase tracking-widest bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">Today</span>}
+                                                        {tomorrowHighlight && <span className="text-[9px] font-black uppercase tracking-widest bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">Tomorrow</span>}
+                                                    </div>
+                                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] md:text-sm font-bold text-gray-500">
+                                                        <span className="flex items-center gap-1.5"><CalendarIcon size={12} className="text-primary" /> {format(new Date(app.date + "T00:00:00"), "MMM do, yyyy")}</span>
+                                                        <span className="flex items-center gap-1.5"><Clock size={12} className="text-primary" /> {app.timeSlot}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center gap-2 md:gap-6">
+                                                <div className="text-right hidden sm:block">
+                                                    <p className="text-xs md:text-sm font-black text-gray-400 mb-1">{app.serviceName}</p>
+                                                    <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full inline-block ${app.status === "confirmed" ? "bg-green-500/10 text-green-500" :
+                                                        app.status === "pending" ? "bg-primary/20 text-primary" : "bg-gray-800 text-gray-400"
+                                                        }`}>
+                                                        {app.status}
+                                                    </div>
+                                                </div>
+                                                <ChevronRight className={`text-gray-700 group-hover:text-primary transition-all ${selectedAppId === app._id ? "rotate-90 text-primary" : ""}`} />
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-2 md:gap-6">
-                                            <div className="text-right hidden sm:block">
-                                                <p className="text-xs md:text-sm font-black text-gray-400 mb-1">{app.serviceName}</p>
-                                                <div className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full inline-block ${app.status === "confirmed" ? "bg-green-500/10 text-green-500" :
-                                                    app.status === "pending" ? "bg-primary/20 text-primary" : "bg-gray-800 text-gray-400"
-                                                    }`}>
-                                                    {app.status}
-                                                </div>
-                                            </div>
-                                            <ChevronRight className={`text-gray-700 group-hover:text-primary transition-all ${selectedAppId === app._id ? "rotate-90 text-primary" : ""}`} />
-                                        </div>
-                                    </div>
-
-                                    {/* Expanded Details */}
-                                    <AnimatePresence>
-                                        {selectedAppId === app._id && (
-                                            <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <div className="pt-8 mt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                                                    <div className="space-y-4 md:space-y-6">
-                                                        <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 md:gap-4">
-                                                            <a href={`tel:${app.customerPhone}`} className="flex items-center gap-3 p-3 md:p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
-                                                                <Phone size={16} className="text-primary" />
-                                                                <div className="overflow-hidden">
-                                                                    <p className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Phone</p>
-                                                                    <p className="text-white text-xs md:text-base font-bold truncate group-hover/link:text-primary">{app.customerPhone}</p>
-                                                                </div>
-                                                            </a>
-                                                            <a href={`mailto:${app.customerEmail}`} className="flex items-center gap-3 p-3 md:p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
-                                                                <Mail size={16} className="text-primary" />
-                                                                <div className="overflow-hidden">
-                                                                    <p className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Email</p>
-                                                                    <p className="text-white text-xs md:text-base font-bold truncate group-hover/link:text-primary">{app.customerEmail}</p>
-                                                                </div>
-                                                            </a>
+                                        {/* Expanded Details */}
+                                        <AnimatePresence>
+                                            {selectedAppId === app._id && (
+                                                <motion.div
+                                                    initial={{ height: 0, opacity: 0 }}
+                                                    animate={{ height: "auto", opacity: 1 }}
+                                                    exit={{ height: 0, opacity: 0 }}
+                                                    className="overflow-hidden"
+                                                >
+                                                    <div className="pt-8 mt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                                                        <div className="space-y-4 md:space-y-6">
+                                                            <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 md:gap-4">
+                                                                <a href={`tel:${app.customerPhone}`} className="flex items-center gap-3 p-3 md:p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
+                                                                    <Phone size={16} className="text-primary" />
+                                                                    <div className="overflow-hidden">
+                                                                        <p className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Phone</p>
+                                                                        <p className="text-white text-xs md:text-base font-bold truncate group-hover/link:text-primary">{app.customerPhone}</p>
+                                                                    </div>
+                                                                </a>
+                                                                <a href={`mailto:${app.customerEmail}`} className="flex items-center gap-3 p-3 md:p-4 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-all group/link">
+                                                                    <Mail size={16} className="text-primary" />
+                                                                    <div className="overflow-hidden">
+                                                                        <p className="text-[9px] md:text-[10px] font-black text-gray-500 uppercase tracking-widest">Email</p>
+                                                                        <p className="text-white text-xs md:text-base font-bold truncate group-hover/link:text-primary">{app.customerEmail}</p>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                            <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Notes from Customer</p>
+                                                                <p className="text-white font-medium text-xs md:text-sm leading-relaxed italic line-clamp-4">"{app.notes || "No special requests"}"</p>
+                                                            </div>
                                                         </div>
-                                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Notes from Customer</p>
-                                                            <p className="text-white font-medium text-xs md:text-sm leading-relaxed italic line-clamp-4">"{app.notes || "No special requests"}"</p>
+
+                                                        <div className="space-y-4 md:space-y-6">
+                                                            <div className="flex flex-col xs:flex-row gap-3">
+                                                                {app.status === "pending" && (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); handleConfirm(app._id); }}
+                                                                        className="flex-1 bg-green-500 text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
+                                                                    >
+                                                                        <CheckCircle2 size={16} /> Confirm
+                                                                    </button>
+                                                                )}
+                                                                {app.status === "confirmed" && (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "completed"); }}
+                                                                        className="flex-1 bg-purple-600 text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
+                                                                    >
+                                                                        <CheckCircle2 size={16} /> Complete
+                                                                    </button>
+                                                                )}
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "cancelled"); }}
+                                                                    className="flex-1 bg-red-500/10 text-red-500 font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition-all text-sm"
+                                                                >
+                                                                    <XCircle size={16} /> Cancel
+                                                                </button>
+                                                            </div>
+                                                            <div className="flex gap-3">
+                                                                <a
+                                                                    href={`https://wa.me/${app.customerPhone.replace(/[^0-9]/g, '')}?text=Hi ${app.customerName.split(' ')[0]}, this is Tina from Braids by Tina regarding your ${app.serviceName} appointment on ${format(new Date(app.date + "T00:00:00"), "MMM do")}.`}
+                                                                    target="_blank"
+                                                                    className="flex-1 bg-[#25D366] text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
+                                                                >
+                                                                    <MessageCircle size={18} /> WhatsApp
+                                                                </a>
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); handleDelete(app._id); }}
+                                                                    className="bg-red-900/30 text-red-400 font-black py-3 md:py-4 px-5 rounded-xl flex items-center justify-center gap-2 hover:bg-red-900/60 hover:text-red-300 transition-all text-sm"
+                                                                >
+                                                                    <Trash2 size={16} /> Delete
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
-
-                                                    <div className="space-y-4 md:space-y-6">
-                                                        <div className="flex flex-col xs:flex-row gap-3">
-                                                            {app.status === "pending" && (
-                                                                <button
-                                                                    onClick={(e) => { e.stopPropagation(); handleConfirm(app._id); }}
-                                                                    className="flex-1 bg-green-500 text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
-                                                                >
-                                                                    <CheckCircle2 size={16} /> Confirm
-                                                                </button>
-                                                            )}
-                                                            {app.status === "confirmed" && (
-                                                                <button
-                                                                    onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "completed"); }}
-                                                                    className="flex-1 bg-purple-600 text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
-                                                                >
-                                                                    <CheckCircle2 size={16} /> Complete
-                                                                </button>
-                                                            )}
-                                                            <button
-                                                                onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "cancelled"); }}
-                                                                className="flex-1 bg-red-500/10 text-red-500 font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition-all text-sm"
-                                                            >
-                                                                <XCircle size={16} /> Cancel
-                                                            </button>
-                                                        </div>
-                                                        <a
-                                                            href={`https://wa.me/${app.customerPhone.replace(/[^0-9]/g, '')}?text=Hi ${app.customerName.split(' ')[0]}, this is Tina from Braids by Tina regarding your ${app.serviceName} appointment on ${format(new Date(app.date), "MMM do")}.`}
-                                                            target="_blank"
-                                                            className="w-full bg-[#25D366] text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
-                                                        >
-                                                            <MessageCircle size={18} /> Open WhatsApp
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-                            ))}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+                                    </motion.div>
+                                );
+                            })}
                         </AnimatePresence>
 
                         {filteredAppointments.length === 0 && (

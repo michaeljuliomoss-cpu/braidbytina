@@ -34,11 +34,14 @@ export const createAppointment = mutation({
             status: "pending",
         });
 
-        const depositContent = await ctx.db
-            .query("siteContent")
-            .withIndex("by_key", (q) => q.eq("key", "deposit-instructions"))
-            .first();
-        const depositInstructions = depositContent?.value;
+        // Send Request Received Email to customer with link to website for deposit info
+        await ctx.scheduler.runAfter(0, api.emails.sendCustomerRequestReceived, {
+            customerName: args.customerName,
+            customerEmail: args.customerEmail,
+            serviceName: args.serviceName,
+            date: args.date,
+            timeSlot: args.timeSlot,
+        });
 
         // Trigger email notification to Tina
         await ctx.scheduler.runAfter(0, api.emails.sendBookingEmail, {
@@ -59,16 +62,6 @@ export const createAppointment = mutation({
             date: args.date,
             timeSlot: args.timeSlot,
             totalPrice: args.totalPrice,
-        });
-
-        // Send Request Received Email with Deposit Instructions
-        await ctx.scheduler.runAfter(0, api.emails.sendCustomerRequestReceived, {
-            customerName: args.customerName,
-            customerEmail: args.customerEmail,
-            serviceName: args.serviceName,
-            date: args.date,
-            timeSlot: args.timeSlot,
-            depositInstructions: depositInstructions,
         });
 
         return appointmentId;
@@ -154,8 +147,25 @@ export const getAllAppointments = query({
     args: {},
     handler: async (ctx) => {
         const appointments = await ctx.db.query("appointments").collect();
-        // Sort by date manually if index isn't enough or for multi-criteria
-        return appointments.sort((a, b) => b.date.localeCompare(a.date));
+        // Sort by date ascending (soonest first)
+        return appointments.sort((a, b) => a.date.localeCompare(b.date) || a.timeSlot.localeCompare(b.timeSlot));
+    },
+});
+
+export const deleteAppointment = mutation({
+    args: { id: v.id("appointments") },
+    handler: async (ctx, args) => {
+        const appointment = await ctx.db.get(args.id);
+        if (!appointment) throw new Error("Appointment not found");
+
+        // If the appointment was confirmed, delete the Google Calendar event too
+        if (appointment.status === "confirmed") {
+            await ctx.scheduler.runAfter(0, internal.calendarApi.deleteEvent, {
+                appointmentId: args.id,
+            });
+        }
+
+        await ctx.db.delete(args.id);
     },
 });
 

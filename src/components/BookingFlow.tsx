@@ -40,51 +40,35 @@ export default function BookingFlow() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Dynamic time slots from Convex
-    const dynamicTimeSlots = useQuery(
-        (api as any).availability.getAvailability,
-        selectedDate ? { date: format(selectedDate, "yyyy-MM-dd") } : "skip"
-    );
+    // Dynamic time slots from Convex (duration-aware)
+    const availableSlotsQuery = useQuery(
+        (api as any).availability.getAvailableSlots,
+        selectedDate && selectedService
+            ? { date: format(selectedDate, "yyyy-MM-dd"), serviceDuration: selectedService.duration }
+            : "skip"
+    ) as string[] | undefined;
 
-    const timeSlots = dynamicTimeSlots || ["09:00 AM", "10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM"];
-
-    // Fetch appointments for the selected date to hide taken slots
-    const dayAppointments = useQuery(
-        api.appointments.getAppointmentsByDate,
-        selectedDate ? { date: format(selectedDate, "yyyy-MM-dd") } : "skip"
-    );
-
-    const takenSlots = dayAppointments?.map(app => app.timeSlot) || [];
-    const availableSlots = (timeSlots || []).filter((slot: string) => {
+    const availableSlots = (availableSlotsQuery || []).filter((slot: string) => {
         if (!slot || typeof slot !== "string") return false;
 
-        // First check if slot is already booked
-        if (takenSlots.includes(slot)) return false;
-
-        // Then check if it's today and the time has already passed
+        // Filter out past times if the selected date is today
         if (selectedDate && isSameDay(selectedDate, new Date())) {
             try {
                 const parts = slot.split(" ");
                 if (parts.length < 2) return true;
-
                 const [time, ampm] = parts;
                 const timeParts = time.split(":");
                 if (timeParts.length < 2) return true;
-
                 let [hours, minutes] = timeParts.map(Number);
                 if (ampm === "PM" && hours !== 12) hours += 12;
                 if (ampm === "AM" && hours === 12) hours = 0;
-
                 const slotTime = new Date();
                 slotTime.setHours(hours, minutes, 0, 0);
-
                 return slotTime > new Date();
             } catch (e) {
-                console.error("Error parsing slot:", slot, e);
                 return true;
             }
         }
-
         return true;
     });
 
@@ -129,7 +113,8 @@ export default function BookingFlow() {
     // Disabled dates logic
     const disabledDays = [
         ...blockedDates.map(d => new Date(d.date)),
-        { before: startOfDay(new Date()) } // Can't book in past
+        { before: startOfDay(new Date()) }, // Can't book in past
+        { dayOfWeek: [0, 6] } // Block weekends (Sunday=0, Saturday=6)
     ];
 
     return (
