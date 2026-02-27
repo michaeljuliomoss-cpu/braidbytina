@@ -234,9 +234,9 @@ export default function ServicesManager() {
                             initial={{ opacity: 0, scale: 0.9, y: 30 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 30 }}
-                            className="relative w-full max-w-2xl bg-secondary rounded-[3rem] border border-white/10 shadow-2xl overflow-hidden"
+                            className="relative w-full max-w-2xl bg-secondary rounded-[3rem] border border-white/10 shadow-2xl flex flex-col max-h-[90vh]"
                         >
-                            <div className="p-10 md:p-12 space-y-8">
+                            <div className="p-10 md:p-12 space-y-8 overflow-y-auto scrollbar-hide">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <h2 className="text-3xl font-black text-white tracking-tighter">
@@ -301,8 +301,8 @@ export default function ServicesManager() {
                                         type="submit"
                                         disabled={loading || success}
                                         className={`w-full py-5 rounded-[2rem] font-black text-xl transition-all flex items-center justify-center gap-3 active:scale-[0.98] ${success
-                                                ? "bg-green-500 text-white shadow-lg shadow-green-500/20"
-                                                : "bg-primary text-white shadow-xl shadow-primary/20 hover:bg-primary-dark"
+                                            ? "bg-green-500 text-white shadow-lg shadow-green-500/20"
+                                            : "bg-primary text-white shadow-xl shadow-primary/20 hover:bg-primary-dark"
                                             }`}
                                     >
                                         {loading ? (

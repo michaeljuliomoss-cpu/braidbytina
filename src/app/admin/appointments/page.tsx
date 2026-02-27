@@ -239,7 +239,7 @@ export default function AppointmentManager() {
                                                         </div>
 
                                                         <div className="space-y-4 md:space-y-6">
-                                                            <div className="flex flex-col xs:flex-row gap-3">
+                                                            <div className="flex flex-col xs:flex-row gap-3 relative z-20">
                                                                 {app.status === "pending" && (
                                                                     <button
                                                                         onClick={(e) => { e.stopPropagation(); handleConfirm(app._id); }}
@@ -256,24 +256,27 @@ export default function AppointmentManager() {
                                                                         <CheckCircle2 size={16} /> Complete
                                                                     </button>
                                                                 )}
-                                                                <button
-                                                                    onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "cancelled"); }}
-                                                                    className="flex-1 bg-red-500/10 text-red-500 font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition-all text-sm"
-                                                                >
-                                                                    <XCircle size={16} /> Cancel
-                                                                </button>
+                                                                {app.status !== "completed" && app.status !== "cancelled" && (
+                                                                    <button
+                                                                        onClick={(e) => { e.stopPropagation(); handleStatusUpdate(app._id, "cancelled"); }}
+                                                                        className="flex-1 bg-red-500/10 text-red-500 font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-red-500 hover:text-white transition-all text-sm"
+                                                                    >
+                                                                        <XCircle size={16} /> Cancel
+                                                                    </button>
+                                                                )}
                                                             </div>
-                                                            <div className="flex gap-3">
+                                                            <div className="flex gap-3 relative z-20">
                                                                 <a
                                                                     href={`https://wa.me/${app.customerPhone.replace(/[^0-9]/g, '')}?text=Hi ${app.customerName.split(' ')[0]}, this is Tina from Braids by Tina regarding your ${app.serviceName} appointment on ${format(new Date(app.date + "T00:00:00"), "MMM do")}.`}
                                                                     target="_blank"
-                                                                    className="flex-1 bg-[#25D366] text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm"
+                                                                    onClick={(e) => e.stopPropagation()}
+                                                                    className="flex-1 bg-[#25D366] text-white font-black py-3 md:py-4 rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all text-sm relative z-30"
                                                                 >
                                                                     <MessageCircle size={18} /> WhatsApp
                                                                 </a>
                                                                 <button
                                                                     onClick={(e) => { e.stopPropagation(); handleDelete(app._id); }}
-                                                                    className="bg-red-900/30 text-red-400 font-black py-3 md:py-4 px-5 rounded-xl flex items-center justify-center gap-2 hover:bg-red-900/60 hover:text-red-300 transition-all text-sm"
+                                                                    className="bg-red-900/30 text-red-400 font-black py-3 md:py-4 px-5 rounded-xl flex items-center justify-center gap-2 hover:bg-red-900/60 hover:text-red-300 transition-all text-sm relative z-30 cursor-pointer"
                                                                 >
                                                                     <Trash2 size={16} /> Delete
                                                                 </button>
