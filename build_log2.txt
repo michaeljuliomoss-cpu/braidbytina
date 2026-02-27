@@ -1,0 +1,34 @@
+
+> braidbytina@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local, .env
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./src/app/admin/appointments/page.tsx:351:10
+Ecmascript file had an error
+[0m [90m 349 |[39m
+ [90m 350 |[39m [90m// Helper to avoid issues with addDays in codeblock[39m
+[31m[1m>[22m[39m[90m 351 |[39m [36mfunction[39m addDays(date[33m:[39m [33mDate[39m[33m,[39m days[33m:[39m number)[33m:[39m [33mDate[39m {
+ [90m     |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 352 |[39m     [36mconst[39m result [33m=[39m [36mnew[39m [33mDate[39m(date)[33m;[39m
+ [90m 353 |[39m     result[33m.[39msetDate(result[33m.[39mgetDate() [33m+[39m days)[33m;[39m
+ [90m 354 |[39m     [36mreturn[39m result[33m;[39m[0m
+
+the name `addDays` is defined multiple times
+
+Import traces:
+  Client Component Browser:
+    ./src/app/admin/appointments/page.tsx [Client Component Browser]
+    ./src/app/admin/appointments/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/admin/appointments/page.tsx [Client Component SSR]
+    ./src/app/admin/appointments/page.tsx [Server Component]
+
+
+    at <unknown> (./src/app/admin/appointments/page.tsx:351:10)

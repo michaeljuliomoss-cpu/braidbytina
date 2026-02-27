@@ -347,9 +347,3 @@ export default function AppointmentManager() {
     );
 }
 
-// Helper to avoid issues with addDays in codeblock
-function addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-}
